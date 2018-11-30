@@ -48,7 +48,6 @@ function HTTP_RGB(log, config) {
             }
             else {
                this.log.warn("Property 'switch.status.bodyRegEx' was given in an unsupported type. Using default one!");
-
             }
         } else {
             this.switch.status.url         = config.switch.status;
