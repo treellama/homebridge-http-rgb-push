@@ -24,9 +24,9 @@ callback for getting and setting the following characteristics to Homekit:
 
 The following is an overview of the structure of your HTTP-RGB accessory.
 
-Both `powerOn` and `powerOff` can either be a `string` or an `object`.  If a
-`string` is provided it is filled in as the `url` and the `body` will be blank.
-Most devices will be ok with the `string` option.
+All `powerOn`, `powerOff` and `status` can either be a `string` or an `object`.
+If a `string` is provided it is filled in as the `url` and the `body` will be
+blank. Most devices will be ok with the `string` option.
 
 The purpose of `powerOff`/`powerOn` for an RGB light is not to physically power
 or de-power the device (as then how would it respond to further commands?), but
@@ -55,7 +55,7 @@ can only read the settings, you may not change them.
         "sendImmediately": string-optional,
 
         "switch": {
-            "status": url-optional,
+            "status": string-or-object-optional,
             "powerOn": string-or-object,
             "powerOff": {
                 url: string,
@@ -176,10 +176,14 @@ remove the brightness component from the config.
 
 # Interfacing
 
-All the `.status` urls expect a 200 HTTP status code and a body of a single
+`switch.status` Can be configured to parse the body to determine the switch
+status. When the specified `switch.status.statusRegEx` matches the body the
+switch is considered to be in the on status. If this parameter is left out
+`switch.status` expects `0` for Off, and `1` for On.
+
+All other `.status` urls expect a 200 HTTP status code and a body of a single
 string with no HTML markup.
 
-* `switch.status` expects `0` for Off, and `1` for On.
 * `brightness.status` expects a number from 0 to 100.
 * `color.status` expects a 6-digit hexidemial number.
 

@@ -36,7 +36,23 @@ function HTTP_RGB(log, config) {
     // Handle the basic on/off
     this.switch = { powerOn: {}, powerOff: {} };
     if (typeof config.switch === 'object') {
-        this.switch.status                 = config.switch.status;
+
+        this.switch.status.bodyRegEx   = new RegExp("1");
+        // Intelligently handle if config.switch.status is an object or string.
+        if (typeof config.switch.status === 'object') {
+            this.switch.status.url         = config.switch.status.url;
+
+            // Verify type of body regular expression parameter.
+            if (typeof config.switch.status.bodyRegEx === "string") {
+               this.switch.status.bodyRegEx = new RegExp(config.switch.status.bodyRegEx);
+            }
+            else {
+               this.log.warn("Property 'switch.status.bodyRegEx' was given in an unsupported type. Using default one!");
+
+            }
+        } else {
+            this.switch.status.url         = config.switch.status;
+        }
 
         // Intelligently handle if config.switch.powerOn is an object or string.
         if (typeof config.switch.powerOn === 'object') {
@@ -171,7 +187,7 @@ HTTP_RGB.prototype = {
                HomeKit-compatible devices can be.
             */
             /*
-            
+
             case 'Lock':
                 var lockService = new Service.LockMechanism(this.name);
 
@@ -248,7 +264,7 @@ HTTP_RGB.prototype = {
                 this.log('getPowerState() failed: %s', error.message);
                 callback(error);
             } else {
-                var powerOn = parseInt(responseBody) > 0;
+                var powerOn = this.switch.status.bodyRegEx.test(responseBody)
                 this.log('power is currently %s', powerOn ? 'ON' : 'OFF');
                 callback(null, powerOn);
             }
