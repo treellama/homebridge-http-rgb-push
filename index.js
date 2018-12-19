@@ -1,5 +1,6 @@
 var Service, Characteristic;
 var request = require('request');
+let api
 
 /**
  * @module homebridge
@@ -10,6 +11,7 @@ module.exports = function(homebridge){
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
     homebridge.registerAccessory('homebridge-better-http-rgb', 'HTTP-RGB', HTTP_RGB);
+    api = homebridge;
 };
 
 /**
@@ -68,6 +70,19 @@ function HTTP_RGB(log, config) {
         } else {
             this.switch.powerOff.set_url   = config.switch.powerOff;
         }
+        
+        // Register notification server
+        api.on('didFinishLaunching', function() {
+           // check if notificationRegistration is set, if not 'notificationRegistration' is probably not installed on the system
+           if (api.notificationRegistration && typeof api.notificationRegistration === "function") {
+               try {
+                   api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), "top-secret-password");
+               } catch (error) {
+                   // notificationID is already taken
+               }
+           }
+        }.bind(this));
+    
     }
 
     // Local caching of HSB color space for RGB callback
