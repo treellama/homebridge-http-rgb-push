@@ -34,7 +34,7 @@ function HTTP_RGB(log, config) {
     this.password                      = config.password                  || '';
 
     // Handle the basic on/off
-    this.switch = { powerOn: {}, powerOff: {} };
+    this.switch = { powerOn: {}, powerOff: {}, status: {} };
     if (typeof config.switch === 'object') {
 
         this.switch.status.bodyRegEx   = new RegExp("1");
@@ -47,7 +47,7 @@ function HTTP_RGB(log, config) {
                this.switch.status.bodyRegEx = new RegExp(config.switch.status.bodyRegEx);
             }
             else {
-               this.log.warn("Property 'switch.status.bodyRegEx' was given in an unsupported type. Using default one!");
+               this.log.warn("Property 'switch.status.bodyRegEx' was provided in an unsupported type. Using default one!");
             }
         } else {
             this.switch.status.url         = config.switch.status;
