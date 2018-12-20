@@ -73,8 +73,10 @@ function HTTP_RGB(log, config) {
         
         // Register notification server.
         api.on('didFinishLaunching', function() {
-           // Check if notificationRegistration is set, if not 'notificationRegistration' is probably not installed on the system.
-           if (api.notificationRegistration && typeof api.notificationRegistration === "function") {
+           // Check if notificationRegistration is set and user specified notificationID.
+           // if not 'notificationRegistration' is probably not installed on the system.
+           if (api.notificationRegistration && typeof api.notificationRegistration === "function" &&
+               config.switch.notificationID) {
                try {
                    api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
                } catch (error) {
