@@ -71,14 +71,14 @@ function HTTP_RGB(log, config) {
             this.switch.powerOff.set_url   = config.switch.powerOff;
         }
         
-        // Register notification server
+        // Register notification server.
         api.on('didFinishLaunching', function() {
-           // check if notificationRegistration is set, if not 'notificationRegistration' is probably not installed on the system
+           // Check if notificationRegistration is set, if not 'notificationRegistration' is probably not installed on the system.
            if (api.notificationRegistration && typeof api.notificationRegistration === "function") {
                try {
-                   api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), "top-secret-password");
+                   api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
                } catch (error) {
-                   // notificationID is already taken
+                   // notificationID is already taken.
                }
            }
         }.bind(this));
