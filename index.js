@@ -1,3 +1,7 @@
+const packageJSON = require('./package.json');
+const informationManufacturer = 'Justin J. Novack';
+const informationModel = 'homebridge-better-http-rgb';
+
 var Service, Characteristic;
 var request = require('request');
 let api
@@ -28,7 +32,8 @@ function HTTP_RGB(log, config) {
     // any information to the console in a controlled and organized manner.
     this.log = log;
 
-    this.service                       = config.service;
+    this.service                       = null;
+    this.serviceCategory               = config.service;
     this.name                          = config.name;
 
     this.http_method                   = config.http_method               || 'GET';
@@ -138,22 +143,22 @@ HTTP_RGB.prototype = {
         var informationService = new Service.AccessoryInformation();
 
         informationService
-            .setCharacteristic(Characteristic.Manufacturer, 'HTTP Manufacturer')
-            .setCharacteristic(Characteristic.Model, 'homebridge-better-http-rgb')
-            .setCharacteristic(Characteristic.SerialNumber, 'HTTP Serial Number');
+            .setCharacteristic(Characteristic.Manufacturer, informationManufacturer)
+            .setCharacteristic(Characteristic.Model, informationModel)
+            .setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
 
-        switch (this.service) {
+        switch (this.serviceCategory) {
             case 'Light':
                 this.log('creating Lightbulb');
-                var lightbulbService = new Service.Lightbulb(this.name);
+                this.service  = new Service.Lightbulb(this.name);
 
                 if (this.switch.status) {
-                    lightbulbService
+                    this.service
                         .getCharacteristic(Characteristic.On)
                         .on('get', this.getPowerState.bind(this))
                         .on('set', this.setPowerState.bind(this));
                 } else {
-                    lightbulbService
+                    this.service
                         .getCharacteristic(Characteristic.On)
                         .on('set', this.setPowerState.bind(this));
                 }
@@ -161,7 +166,7 @@ HTTP_RGB.prototype = {
                 // Handle brightness
                 if (this.has.brightness) {
                     this.log('... adding Brightness');
-                    lightbulbService
+                    this.service
                         .addCharacteristic(new Characteristic.Brightness())
                         .on('get', this.getBrightness.bind(this))
                         .on('set', this.setBrightness.bind(this));
@@ -169,34 +174,34 @@ HTTP_RGB.prototype = {
                 // Handle color
                 if (this.color) {
                     this.log('... Ted Turnerizing(tm)');
-                    lightbulbService
+                    this.service
                         .addCharacteristic(new Characteristic.Hue())
                         .on('get', this.getHue.bind(this))
                         .on('set', this.setHue.bind(this));
 
-                    lightbulbService
+                    this.service
                         .addCharacteristic(new Characteristic.Saturation())
                         .on('get', this.getSaturation.bind(this))
                         .on('set', this.setSaturation.bind(this));
                 }
 
-                return [lightbulbService];
+                return [informationService, this.service];
 
             case 'Switch':
                 this.log('creating Switch');
-                var switchService = new Service.Switch(this.name);
+                vthis.service = new Service.Switch(this.name);
 
                 if (this.switch.status) {
-                    switchService
+                    this.service
                         .getCharacteristic(Characteristic.On)
                         .on('get', this.getPowerState.bind(this))
                         .on('set', this.setPowerState.bind(this));
                 } else {
-                    switchService
+                    this.service
                         .getCharacteristic(Characteristic.On)
                         .on('set', this.setPowerState.bind(this));
                 }
-                return [switchService];
+                return [informationService, this.service];
 
             /*
                These are included here as an example of what other
@@ -217,7 +222,7 @@ HTTP_RGB.prototype = {
                     .on('get', this.getLockTarget.bind(this))
                     .on('set', this.setLockTarget.bind(this));
 
-                return [lockService];
+                return [informationService, lockService];
 
             case 'Smoke':
                 var smokeService = new Service.SmokeSensor(this.name);
@@ -226,7 +231,7 @@ HTTP_RGB.prototype = {
                     .getCharacteristic(Characteristic.SmokeDetected)
                     .on('set', this.getSmokeDetected.bind(this));
 
-                return [smokeService];
+                return [informationService, smokeService];
 
             case 'Motion':
                 var motionService = new Service.MotionSensor(this.name);
@@ -235,7 +240,7 @@ HTTP_RGB.prototype = {
                     .getCharacteristic(Characteristic.MotionDetected)
                     .on('get', this.getMotionDetected.bind(this));
 
-                return [motionService];
+                return [informationService, motionService];
 
             case 'Temp':
                 var temperatureService = new Service.TemperatureSensor(this.name);
@@ -249,7 +254,7 @@ HTTP_RGB.prototype = {
                     .getCharacteristic(Characteristic.CurrentRelativeHumidity)
                     .on('get', this.getHumidity.bind(this));
 
-                return [temperatureService, humidityService];
+                return [informationService, temperatureService, humidityService];
 
             */
 
@@ -261,19 +266,45 @@ HTTP_RGB.prototype = {
 
     //** Custom Functions **//
 
+   /**
+     * Called by homebridge-http-notification-server
+     * whenever an accessory sends a status update.
+     *
+     * @param {function} jsonRequest The characteristic and characteristic value to update.
+     */
+   handleNotification: function (jsonRequest) {
+        const service = jsonRequest.service;
+        
+        const characteristic = jsonRequest.characteristic;
+        const value = jsonRequest.value;
+        
+        let characteristicType;
+        switch (characteristic) {
+            case "On":
+                characteristicType = Characteristic.On;
+                break;
+            default:
+                this.log("Encountered unknown characteristic when handling notification: " + jsonRequest.characteristic);
+                return;
+        }
+ 
+        this.ignoreNextSetPowerState = true; // See method setPowerStatus().
+        this.service.setCharacteristic(characteristicType, value); // This will also call setPowerStatus() indirectly.
+    },
+
     /**
      * Gets power state of lightbulb.
      *
      * @param {function} callback The callback that handles the response.
      */
     getPowerState: function(callback) {
-        if (!this.switch.status) {
+        if (!this.switch.status.url) {
             this.log.warn('Ignoring request, switch.status not defined.');
             callback(new Error('No switch.status url defined.'));
             return;
         }
 
-        var url = this.switch.status;
+        var url = this.switch.status.url;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
             if (error) {
@@ -299,6 +330,14 @@ HTTP_RGB.prototype = {
         if (!this.switch.powerOn.set_url || !this.switch.powerOff.set_url) {
             this.log.warn('Ignoring request, powerOn.url or powerOff.url is not defined.');
             callback(new Error("The 'switch' section in your configuration is incorrect."));
+            return;
+        }
+        
+        // Prevent an infinite loop when setCharacteristic() from 
+        // handleNotification() also indirectly calls setPowerState.
+        if (this.ignoreNextSetPowerState) {
+            this.ignoreNextSetPowerState = false;
+            callback(undefined);
             return;
         }
 
