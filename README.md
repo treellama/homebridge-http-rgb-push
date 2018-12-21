@@ -45,7 +45,7 @@ This accessory supports push notification from the physical device via
 'homebridge-http-notification-server'. This allows the device to modify the
 switch's status by pushing the new status instead of Homebridge pulling it.
 This can be realized by supplying the `notificationID`.
-To get more details about the push configuration have a look at the 
+To get more details about the push configuration have a look at this 
 [README](https://github.com/Supereg/homebridge-http-notification-server).
 
 `service` is one of `['Light', 'Switch']`.
@@ -64,7 +64,7 @@ To get more details about the push configuration have a look at the
         "switch": {
             "status": string-or-object-optional,
             "notificationID": string-optional,
-            notificationPassword: string-optional,
+            "notificationPassword": string-optional,
             "powerOn": string-or-object,
             "powerOff": {
                 url: string,
@@ -182,6 +182,25 @@ This normally will not occur, however, you may not want your application to
 display a "brightness" slider to the user.  In this case, you will want to
 remove the brightness component from the config.
 
+### Regular expression on-body matching
+
+    "accessories": [
+        {
+            "accessory": "HTTP-RGB",
+            "name": "JSON body matching",
+            "service": "Light",
+
+            "switch": {
+                "status": {
+                    "url": "http://localhost/api/v1/status",
+                    "bodyRegEx": "\"switch\":\s*\"on\""
+                }
+                "powerOn": "http://localhost/api/v1/on",
+                "powerOff": "http://localhost/api/v1/off"
+            }
+            }
+        }
+    ]
 
 # Interfacing
 All `.status` urls expect a 200 HTTP status code.
