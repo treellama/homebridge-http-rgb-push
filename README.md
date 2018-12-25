@@ -1,6 +1,6 @@
 # homebridge-better-http-rgb
 
-Homebridge plugin to control a HTTP-based RGB device.
+_Homebridge plugin to control a HTTP-based RGB device._
 
 Supports RGB HTTP(S) devices on the HomeBridge Platform and provides a readable
 callback for getting and setting the following characteristics to Homekit:
@@ -18,6 +18,7 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
   updated state after reboot.
 * Supports regular expression pattern matching for on/off switches to determine whether the body reflects an on or off status.
 * Fixes a bug which causes the original plugin to not report the correct manufacturer, make and model towards HomeKit.
+* Added timeout parameter to prevent HomeBridge from getting stuck on a single unresponsive device. Credits: [Tommrodrigues/homebridge-better-http-rgb](https://github.com/Tommrodrigues/homebridge-better-http-rgb)
 
 # Installation
 
@@ -111,6 +112,7 @@ To get more details about the push configuration have a look at this
             "accessory": "HTTP-RGB",
             "name": "RGB Led Strip",
             "service": "Light",
+            "timeout": 3000,
 
             "switch": {
                 "status": "http://localhost/api/v1/status",
