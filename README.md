@@ -165,6 +165,8 @@ remove the brightness component from the config.
 | `http_method` _(optional)_ | The HTTP method used for set requests. | "GET" |
 | `username` _(optional)_ | Username if http authentication is enabled on the RGB device | |
 | `password` _(optional)_ | Password if http authentication is enabled on the RGB device | |
+| `notificationID` _(optional)_ | Identifier to use when device sends push notifications. See [Push notifications](#push-responses-device-pushes-updates)  | |
+| `notificationPasword` _(optional)_ | Password to use when device sends push notifications.  | |
 | `switch` | A [switch object](#switch-object) | - |
 | `brightness` | A [brightness object](#brightness-object) | - |
 | `color` | A [color object](#color-object) | - |
