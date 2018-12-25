@@ -30,6 +30,9 @@ sudo npm install -g git+https://github.com/QuickSander/homebridge-better-http-rg
 ```
 3. Update your configuration file.  See below for examples.
 
+Note: See [Installing packages globally](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) when you experience
+permission problems.
+
 ## Uninstall
 
 To uninstall homebridge-better-http-rgb, simply run:

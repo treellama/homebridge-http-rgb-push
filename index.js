@@ -150,7 +150,7 @@ HTTP_RGB.prototype = {
 
         switch (this.serviceCategory) {
             case 'Light':
-                this.log('creating Lightbulb');
+                this.log('Creating Lightbulb');
                 this.service  = new Service.Lightbulb(this.name);
 
                 if (this.switch.status) {
@@ -166,7 +166,7 @@ HTTP_RGB.prototype = {
 
                 // Handle brightness
                 if (this.has.brightness) {
-                    this.log('... adding Brightness');
+                    this.log('... adding brightness');
                     this.service
                         .addCharacteristic(new Characteristic.Brightness())
                         .on('get', this.getBrightness.bind(this))
@@ -174,7 +174,7 @@ HTTP_RGB.prototype = {
                 }
                 // Handle color
                 if (this.color) {
-                    this.log('... Ted Turnerizing(tm)');
+                    this.log('... adding color)');
                     this.service
                         .addCharacteristic(new Characteristic.Hue())
                         .on('get', this.getHue.bind(this))
