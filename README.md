@@ -1,8 +1,8 @@
 # homebridge-better-http-rgb
 
-[![NPM](https://img.shields.io/npm/v/homebridge-better-http-rgb.svg)](https://www.npmjs.com/package/homebridge-better-http-rgb)
+_Homebridge plugin to control a HTTP-based RGB device._
 
-Supports RGB http(s) devices on the HomeBridge Platform and provides a readable
+Supports RGB HTTP(S) devices on the HomeBridge Platform and provides a readable
 callback for getting and setting the following characteristics to Homekit:
 
 * Characteristic.On
@@ -10,86 +10,34 @@ callback for getting and setting the following characteristics to Homekit:
 * Characteristic.Hue
 * Characteristic.Saturation
 
+## What is this fork?
 
-# Installation
+This fork differs from the original [jnovack/homebridge-better-http-rgb](https://github.com/jnovack/homebridge-better-http-rgb#why-better) in the following ways:
+* Supports [homebridge-http-notifiation-server](https://github.com/Supereg/homebridge-http-notification-server) to allow the device to push it's status changes instead of poll based pull. E.g. if you have one device that
+  allows for multiple different effects while only one can be active at the same time. HomeKit can then show multiple switches representing one device. The group of switches will function as a radio button since the device will push the off status for the other switches. Or when you manually reboot the device to notify HomeKit of its
+  updated state after reboot.
+* Supports regular expression pattern matching for on/off switches to determine whether the body reflects an on or off status.
+* Fixes a bug which causes the original plugin to not report the correct manufacturer, make and model towards HomeKit.
+* Added timeout parameter to prevent HomeBridge from getting stuck on a single unresponsive device. Credits: [Tommrodrigues/homebridge-better-http-rgb](https://github.com/Tommrodrigues/homebridge-better-http-rgb).
+* Corrected some minor README inconsistencies.
+
+## Installation
 
 1. Install homebridge using: `npm install -g homebridge`
-2. Install homebridge-http using: `npm install -g homebridge-better-http-rgb`
+2. Install homebridge-http using:
+```
+sudo npm install -g git+https://github.com/QuickSander/homebridge-better-http-rgb.git
+```
 3. Update your configuration file.  See below for examples.
 
+## Uninstall
+
+To uninstall homebridge-better-http-rgb, simply run:
+```
+sudo npm uninstall -g homebridge-better-http-rgb
+```
 
 # Configuration
-
-## Structure
-
-The following is an overview of the structure of your HTTP-RGB accessory.
-
-All `powerOn`, `powerOff` and `status` can either be a `string` or an `object`.
-If a `string` is provided it is filled in as the `url` and the `body` will be
-blank. Most devices will be ok with the `string` option.
-
-The purpose of `powerOff`/`powerOn` for an RGB light is not to physically power
-or de-power the device (as then how would it respond to further commands?), but
-to set the LED color to black (for `powerOff`), and restore the color (for
-`powerOn`).  Your backend device should already be doing this.  This is just
-a convenience function so that your HomeBridge knows this device can turn off
-or on.
-
-Additionally, both `brightness` and `color` share the same structure (with the
-exception that the `color` structure allows for a `.brightness` variable), they
-can either be a `string` or an `object`.  If it is a `string`, it is filled in
-as the `status` and the other fields are left blank. When this is the case, you
-can only read the settings, you may not change them.
-
-This accessory supports push notification from the physical device via 
-'homebridge-http-notification-server'. This allows the device to modify the
-switch's status by pushing the new status instead of Homebridge pulling it.
-This can be realized by supplying the `notificationID`.
-To get more details about the push configuration have a look at this 
-[README](https://github.com/Supereg/homebridge-http-notification-server).
-
-`service` is one of `['Light', 'Switch']`.
-
-
-    {
-        "accessory": "HTTP-RGB",
-        "name": string,
-        "service": string,
-
-        "http_method": string-optional,
-        "username": string-optional,
-        "password": string-optional,
-        "sendImmediately": string-optional,
-
-        "switch": {
-            "status": string-or-object-optional,
-            "notificationID": string-optional,
-            "notificationPassword": string-optional,
-            "powerOn": string-or-object,
-            "powerOff": {
-                url: string,
-                body: string
-            }
-        },
-
-        "lock": {
-            "status": url-optional,
-            "secure": string-or-object,
-            "unsecure": {
-                url: string,
-                body: string
-            }
-        },
-
-        "brightness": string-or-object,
-        "color": {
-            "status": url-status,
-            "url": url-optional,
-            "brightness": boolean,
-            "http_method": string-optional
-        }
-    }
-
 
 ## Examples
 
@@ -100,6 +48,7 @@ To get more details about the push configuration have a look at this
             "accessory": "HTTP-RGB",
             "name": "RGB Led Strip",
             "service": "Light",
+            "timeout": 3000,
 
             "switch": {
                 "status": "http://localhost/api/v1/status",
@@ -202,7 +151,52 @@ remove the brightness component from the config.
         }
     ]
 
-# Interfacing
+## Structure
+
+| Key | Description | Default |
+| --- | --- | --- |
+| `accessory` | Must be "HTTP-RGB" | |
+| `name` | The name of your RGB accessory. It will appear in the Home app | "RGB Light" |
+| `service` | `"Light"` or `"Switch"` |  |
+| `timeout` _(optional)_ | Time (in milli seconds) until the accessory will be marked as "Not Responding" if it is unreachable.| 5000 |
+| `http_method` _(optional)_ | The HTTP method used for set requests. | "GET" |
+| `username` _(optional)_ | Username if http authentication is enabled on the RGB device | |
+| `password` _(optional)_ | Password if http authentication is enabled on the RGB device | |
+| `switch` | A [switch object](#switch-object) | - |
+| `brightness` | A [brightness object](#brightness-object) | - |
+| `color` | A [color object](#color-object) | - |
+
+### Switch object
+
+| Key | Description |
+| --- | --- |
+| `status` | URL to get RGB current state (`1` or `0`) or a [status object](#status-object). |
+| `powerOn` | URL to set the on state of the RGB device |
+| `powerOff` | URL to set the off state of the RGB device |
+
+#### Switch status object
+| Key | Description |
+| --- | --- |
+| `url` | URL to retrieve switch status |
+| `bodyRegEx` | Regular expression. When matched switch is considered "on". |
+
+### Brightness object
+
+| Key | Description |
+| --- | --- |
+| `status` | URL to get RGB current brightness (`0`-`100`(%)) |
+| `url` | URL to set the current brightness of the RGB device (`0`-`100`(%)) |
+
+### Color object
+| Key | Description |
+| --- | --- |
+| `status` | URL to get RGB current colour (HEX value) |
+| `url` | URL to set the RGB colour value (HEX value) |
+| `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`) |
+
+
+# Device responses
+## Pull method: HomeBridge polls
 All `.status` urls expect a 200 HTTP status code.
 
 `switch.status` Can be configured to parse the body to determine the switch
@@ -216,36 +210,10 @@ string with no HTML markup.
 * `brightness.status` expects a number from 0 to 100.
 * `color.status` expects a 6-digit hexidemial number.
 
-## http-led-controller
-
-This package was developed in tandem with
-[jnovack/http-led-controller](https://github.com/jnovack/http-led-controller).
-
-I needed a way to control my [blinksticks](https://www.blinkstick.com/) from
-HomeKit/HomeBridge.  After developing this package, I had to have a backend in
-the event someone's HomeKit/HomeBridge is on a different server, or in my case,
-there are 4-5 different Raspberry Pi's running blinksticks around my house.
-
-
-# Why 'better'?
-
-As we all know, the word 'better' is subjective, so why put it in the title? I
-decided to call it 'better' because it is intended to be a 'better' example of
-how to code, not in the way of a 'better' or more feature-rich project.
-
-There's thousands of projects on github that are just thrown together, half-
-working, or abandoned and I wanted to make sure that my little contribution to
-the open-source movement gave more than just code.
-
-The 'better'-project goals are to make sure there is documentation, tests, code
-and style standards. While I may have missed a few spots, my intention is to
-ensure that those exist.  There is value in documentation, style and testing;
-and I want to serve as an example to younger (or newer) coders that may be
-trying to hack apart this project.
-
-
-# TODO
-
-* Perhaps validation of some sort?
-* _httprequest should check for non-200
-* Better error handling of config errors
+## Push responses: Device pushes updates
+This accessory supports push notification from the physical device via
+'homebridge-http-notification-server'. This allows the device to modify the
+switch's status by pushing the new status instead of Homebridge pulling it.
+This can be realized by supplying the `notificationID`.
+To get more details about the push configuration have a look at this
+[README](https://github.com/Supereg/homebridge-http-notification-server).
