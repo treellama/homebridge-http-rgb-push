@@ -173,7 +173,7 @@ remove the brightness component from the config.
 
 | Key | Description |
 | --- | --- |
-| `status` | URL to get RGB current state (`1` or `0`) or a [status object](#status-object). |
+| `status` | URL to get RGB current state (`1` or `0`) or a [status object](#switch-status-object). |
 | `powerOn` | URL to set the on state of the RGB device |
 | `powerOff` | URL to set the off state of the RGB device |
 
