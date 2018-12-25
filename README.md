@@ -1,6 +1,8 @@
 # homebridge-better-http-rgb
 
-Supports RGB http(s) devices on the HomeBridge Platform and provides a readable
+#### Homebridge plugin to control a HTTP-based RGB device.
+
+Supports RGB HTTP(S) devices on the HomeBridge Platform and provides a readable
 callback for getting and setting the following characteristics to Homekit:
 
 * Characteristic.On
@@ -12,7 +14,10 @@ callback for getting and setting the following characteristics to Homekit:
 # Installation
 
 1. Install homebridge using: `npm install -g homebridge`
-2. Install homebridge-http using: `npm install -g homebridge-better-http-rgb`
+2. Install homebridge-http using:
+```
+sudo npm install -g git+https://github.com/QuickSander/homebridge-better-http-rgb.git
+```
 3. Update your configuration file.  See below for examples.
 
 
