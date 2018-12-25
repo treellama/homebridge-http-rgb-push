@@ -1,7 +1,5 @@
 # homebridge-better-http-rgb
 
-[![NPM](https://img.shields.io/npm/v/homebridge-better-http-rgb.svg)](https://www.npmjs.com/package/homebridge-better-http-rgb)
-
 Supports RGB http(s) devices on the HomeBridge Platform and provides a readable
 callback for getting and setting the following characteristics to Homekit:
 
@@ -216,36 +214,13 @@ string with no HTML markup.
 * `brightness.status` expects a number from 0 to 100.
 * `color.status` expects a 6-digit hexidemial number.
 
-## http-led-controller
-
-This package was developed in tandem with
-[jnovack/http-led-controller](https://github.com/jnovack/http-led-controller).
-
-I needed a way to control my [blinksticks](https://www.blinkstick.com/) from
-HomeKit/HomeBridge.  After developing this package, I had to have a backend in
-the event someone's HomeKit/HomeBridge is on a different server, or in my case,
-there are 4-5 different Raspberry Pi's running blinksticks around my house.
-
-
 # Why 'better'?
 
-As we all know, the word 'better' is subjective, so why put it in the title? I
-decided to call it 'better' because it is intended to be a 'better' example of
-how to code, not in the way of a 'better' or more feature-rich project.
+See original statement from [jnovack/homebridge-better-http-rgb](https://github.com/jnovack/homebridge-better-http-rgb#why-better).
 
-There's thousands of projects on github that are just thrown together, half-
-working, or abandoned and I wanted to make sure that my little contribution to
-the open-source movement gave more than just code.
+## Uninstall
 
-The 'better'-project goals are to make sure there is documentation, tests, code
-and style standards. While I may have missed a few spots, my intention is to
-ensure that those exist.  There is value in documentation, style and testing;
-and I want to serve as an example to younger (or newer) coders that may be
-trying to hack apart this project.
-
-
-# TODO
-
-* Perhaps validation of some sort?
-* _httprequest should check for non-200
-* Better error handling of config errors
+To uninstall homebridge-better-http-rgb, simply run:
+```
+sudo npm uninstall -g homebridge-better-http-rgb
+```
