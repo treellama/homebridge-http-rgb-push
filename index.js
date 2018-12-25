@@ -34,11 +34,12 @@ function HTTP_RGB(log, config) {
 
     this.service                       = null;
     this.serviceCategory               = config.service;
-    this.name                          = config.name;
+    this.name                          = config.name                      || 'RGB Light';
 
     this.http_method                   = config.http_method               || 'GET';
     this.username                      = config.username                  || '';
     this.password                      = config.password                  || '';
+    this.timeout                       = config.timeout                   || 5000;
 
     // Handle the basic on/off
     this.switch = { powerOn: {}, powerOff: {}, status: {} };
@@ -203,68 +204,13 @@ HTTP_RGB.prototype = {
                 }
                 return [informationService, this.service];
 
-            /*
-               These are included here as an example of what other
-               HomeKit-compatible devices can be.
-            */
-            /*
-
-            case 'Lock':
-                var lockService = new Service.LockMechanism(this.name);
-
-                lockService
-                    .getCharacteristic(Characteristic.LockCurrent)
-                    .on('get', this.getLockCurrent.bind(this))
-                    .on('set', this.setLockCurrent.bind(this));
-
-                lockService
-                    .getCharacteristic(Characteristic.LockTarget)
-                    .on('get', this.getLockTarget.bind(this))
-                    .on('set', this.setLockTarget.bind(this));
-
-                return [informationService, lockService];
-
-            case 'Smoke':
-                var smokeService = new Service.SmokeSensor(this.name);
-
-                smokeService
-                    .getCharacteristic(Characteristic.SmokeDetected)
-                    .on('set', this.getSmokeDetected.bind(this));
-
-                return [informationService, smokeService];
-
-            case 'Motion':
-                var motionService = new Service.MotionSensor(this.name);
-
-                motionService
-                    .getCharacteristic(Characteristic.MotionDetected)
-                    .on('get', this.getMotionDetected.bind(this));
-
-                return [informationService, motionService];
-
-            case 'Temp':
-                var temperatureService = new Service.TemperatureSensor(this.name);
-
-                temperatureService
-                    .getCharacteristic(Characteristic.CurrentTemperature)
-                    .on('get', this.getTemperature.bind(this));
-
-                var humidityService = new Service.HumiditySensor(this.name);
-                humidityService
-                    .getCharacteristic(Characteristic.CurrentRelativeHumidity)
-                    .on('get', this.getHumidity.bind(this));
-
-                return [informationService, temperatureService, humidityService];
-
-            */
-
             default:
                 return [informationService];
 
         } // end switch
     },
 
-    //** Custom Functions **//
+   //** Custom Functions **//
 
    /**
      * Called by homebridge-http-notification-server
@@ -571,6 +517,7 @@ HTTP_RGB.prototype = {
             url: url,
             body: body,
             method: method,
+            timeout: this.timeout,
             rejectUnauthorized: false,
             auth: {
                 user: this.username,

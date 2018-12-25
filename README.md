@@ -1,6 +1,6 @@
 # homebridge-better-http-rgb
 
-#### Homebridge plugin to control a HTTP-based RGB device.
+Homebridge plugin to control a HTTP-based RGB device.
 
 Supports RGB HTTP(S) devices on the HomeBridge Platform and provides a readable
 callback for getting and setting the following characteristics to Homekit:
@@ -10,7 +10,7 @@ callback for getting and setting the following characteristics to Homekit:
 * Characteristic.Hue
 * Characteristic.Saturation
 
-### What is this fork?
+## What is this fork?
 
 This fork differs from the original [jnovack/homebridge-better-http-rgb](https://github.com/jnovack/homebridge-better-http-rgb#why-better) in the following ways:
 * Supports homebridge-http-notifiation-server to allow the device to push it's status changes instead of poll based pull. E.g. if you have one device that
@@ -213,7 +213,7 @@ remove the brightness component from the config.
         }
     ]
 
-# Interfacing
+# Reply messages
 All `.status` urls expect a 200 HTTP status code.
 
 `switch.status` Can be configured to parse the body to determine the switch
@@ -226,10 +226,6 @@ string with no HTML markup.
 
 * `brightness.status` expects a number from 0 to 100.
 * `color.status` expects a 6-digit hexidemial number.
-
-# Why 'better'?
-
-See original statement from [jnovack/homebridge-better-http-rgb](https://github.com/jnovack/homebridge-better-http-rgb#why-better).
 
 ## Uninstall
 
