@@ -10,6 +10,14 @@ callback for getting and setting the following characteristics to Homekit:
 * Characteristic.Hue
 * Characteristic.Saturation
 
+### What is this fork?
+
+This fork differs from the original [jnovack/homebridge-better-http-rgb](https://github.com/jnovack/homebridge-better-http-rgb#why-better) in the following ways:
+* Supports homebridge-http-notifiation-server to allow the device to push it's status changes instead of poll based pull. E.g. if you have one device that
+  allows for multiple different effects while only one can be active at the same time, or when you manually reboot the device to notify homekit of its
+  updated state after reboot.
+* Supports regular expression pattern matching for on/off switches to determine whether the body reflects an on or off status.
+* Fixes a bug which causes the original plugin to not report the correct manufacturer, make and model towards HomeKit.
 
 # Installation
 
