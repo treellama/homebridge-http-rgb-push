@@ -25,9 +25,7 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
 
 1. Install homebridge using: `npm install -g homebridge`
 2. Install homebridge-http using:
-```
-sudo npm install -g git+https://github.com/QuickSander/homebridge-http-rgb-push.git
-```
+`sudo npm install -g git+https://github.com/QuickSander/homebridge-http-rgb-push.git`
 or
 `sudo npm install -g homebridge-http-rgb-push`
 
