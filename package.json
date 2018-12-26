@@ -25,5 +25,11 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/quicksander/homebridge-http-rgb-push.git"
+  },
+  
+  "preferGlobal": true,
+  
+  "dependencies": {
+    "request": "^2.65.0"
   }
 }
