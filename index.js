@@ -1,6 +1,6 @@
 const packageJSON = require('./package.json');
-const informationManufacturer = 'Justin J. Novack';
-const informationModel = 'homebridge-better-http-rgb';
+const informationManufacturer = 'Sander van Woensel';
+const informationModel = 'homebridge-http-rgb-push';
 
 var Service, Characteristic;
 var request = require('request');
@@ -14,7 +14,7 @@ let api
 module.exports = function(homebridge){
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory('homebridge-better-http-rgb', 'HTTP-RGB', HTTP_RGB);
+    homebridge.registerAccessory(informationModel, 'HTTP-RGB', HTTP_RGB);
     api = homebridge;
 };
 

@@ -1,4 +1,4 @@
-# homebridge-better-http-rgb
+# homebridge-http-rgb-push
 
 _Homebridge plugin to control a HTTP-based RGB device._
 
@@ -26,8 +26,11 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
 1. Install homebridge using: `npm install -g homebridge`
 2. Install homebridge-http using:
 ```
-sudo npm install -g git+https://github.com/QuickSander/homebridge-better-http-rgb.git
+sudo npm install -g git+https://github.com/QuickSander/homebridge-http-rgb-push.git
 ```
+or
+`sudo npm install -g homebridge-http-rgb-push`
+
 3. Update your configuration file.  See below for examples.
 
 Note: See [Installing packages globally](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) when you experience
@@ -37,7 +40,7 @@ permission problems.
 
 To uninstall homebridge-better-http-rgb, simply run:
 ```
-sudo npm uninstall -g homebridge-better-http-rgb
+sudo npm uninstall -g homebridge-http-rgb-push
 ```
 
 # Configuration
