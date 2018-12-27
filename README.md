@@ -220,8 +220,17 @@ string with no HTML markup.
 This accessory supports push notification from the physical device via
 [homebridge-http-notification-server](https://github.com/Supereg/homebridge-http-notification-server). This allows the device to modify the
 switch's status by pushing the new status instead of Homebridge pulling it.
-This can be realized by supplying the `notificationID`.
-Your device should then push the `On` `characteristic` towards the notification server
-using the specified `notificationID` as `service`. 
+This can be realized by supplying the `notificationID` as part of this accesory's configuration.
+Your device should then push the `On` `characteristic` towards the notification server.
+E.g. a POST request towards `http://<homebridge-host>:<notification-server-port>/<notificationID>` with the following
+body:
+   
+```
+{
+   "characteristic": "On",
+   "value": true
+}
+```
+
 To get more details about the push configuration have a look at this
 [README](https://github.com/Supereg/homebridge-http-notification-server).

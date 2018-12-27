@@ -174,7 +174,7 @@ HTTP_RGB.prototype = {
                 }
                 // Handle color
                 if (this.color) {
-                    this.log('... adding color)');
+                    this.log('... adding color');
                     this.service
                         .addCharacteristic(new Characteristic.Hue())
                         .on('get', this.getHue.bind(this))
