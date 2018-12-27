@@ -1,6 +1,9 @@
 CHANGELOG
 =========
 
+## v1.0.0
+Added semantic release options.
+
 ## v2.0.2
 * Minor change in logging text.
 
