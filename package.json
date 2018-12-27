@@ -1,6 +1,6 @@
 {
   "name": "homebridge-http-rgb-push",
-  "version": "2.1.1",
+  "version": "2.2.0-development",
   "description": "Homebridge plugin to control a HTTP RGB device with push notification support (fork of homebridge-better-http-rgb).",
   "license": "ISC",
   "keywords": [
@@ -24,12 +24,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/quicksander/homebridge-http-rgb-push.git"
+    "url": "https://github.com/QuickSander/homebridge-http-rgb-push.git"
   },
-  
   "preferGlobal": true,
-  
   "dependencies": {
-    "request": "^2.65.0"
+    "request": "^2.88.0"
+  },
+  "scripts": {
+    "semantic-release": "semantic-release"
+  },
+  "devDependencies": {
+    "semantic-release": "^15.13.1"
   }
 }

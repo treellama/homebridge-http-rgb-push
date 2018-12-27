@@ -1,3 +1,5 @@
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+
 # homebridge-http-rgb-push
 
 _Homebridge plugin to control a HTTP-based RGB device._
@@ -19,7 +21,7 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
 * Supports regular expression pattern matching for on/off switches to determine whether the body reflects an on or off status.
 * Fixes a bug which causes the original plugin to not report the correct manufacturer, make and model towards HomeKit.
 * Added timeout parameter to prevent HomeBridge from getting stuck on a single unresponsive device. Credits: [Tommrodrigues/homebridge-better-http-rgb](https://github.com/Tommrodrigues/homebridge-better-http-rgb).
-* Corrected some minor README inconsistencies.
+* README rewrite and corrections.
 
 ## Installation
 
