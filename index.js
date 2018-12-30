@@ -2,8 +2,10 @@
 // Constants
 // -----------------------------------------------------------------------------
 const PACKAGE_JSON = require('./package.json');
-const MANUFACTURER = 'Sander van Woensel';
-const MODEL = 'homebridge-http-rgb-push';
+const MANUFACTURER = PACKAGE_JSON.author.name  bla bla'Sander van Woensel';
+const MODEL = PACKAGE_JSON.name;
+const SERIAL_NUMBER = '001';
+const FIRMWARE_REVISION = PACKAGE_JSON.version;
 
 // -----------------------------------------------------------------------------
 // Module variables
@@ -19,7 +21,7 @@ module.exports = function(homebridge){
     api = homebridge;
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory(MODEL, 'HTTP-RGB', HTTP_RGB);
+    homebridge.registerAccessory(MODEL, 'HTTP-RGB-PUSH', HttpRgbPush);
 };
 
 // -----------------------------------------------------------------------------
@@ -29,12 +31,11 @@ module.exports = function(homebridge){
 /**
  * Parse the config and instantiate the object.
  *
- * @summary Constructor
  * @constructor
- * @param {function} log Logging function
- * @param {object} config Your configuration object
+ * @param {function} log Logging function.
+ * @param {object} config The configuration object.
  */
-function HTTP_RGB(log, config) {
+function HttpRgbPush(log, config) {
 
     // The logging function is required if you want your function to output
     // any information to the console in a controlled and organized manner.
@@ -135,9 +136,9 @@ function HTTP_RGB(log, config) {
 }
 
 /**
- * @augments HTTP_RGB
+ * @augments HttpRgbPush
  */
-HTTP_RGB.prototype = {
+HttpRgbPush.prototype = {
 
     // Required Functions
     identify: function(callback) {
@@ -146,14 +147,13 @@ HTTP_RGB.prototype = {
     },
 
     getServices: function() {
-        // You may OPTIONALLY define an information service if you wish to override
-        // default values for devices like serial number, model, etc.
         var informationService = new Service.AccessoryInformation();
 
         informationService
-            .setCharacteristic(Characteristic.Manufacturer, MANUFACTIRER)
+            .setCharacteristic(Characteristic.Manufacturer, MANUFACTURER)
+            .setCharacteristic(Characteristic.SerialNumber, SERIAL_NUMBER)
             .setCharacteristic(Characteristic.Model, MODEL)
-            .setCharacteristic(Characteristic.FirmwareRevision, PACKAGE_JSON.version);
+            .setCharacteristic(Characteristic.FirmwareRevision, FIRMWARE_REVISION);
 
         switch (this.serviceCategory) {
             case 'Light':

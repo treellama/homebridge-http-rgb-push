@@ -55,7 +55,7 @@ describe('Homebridge plugin creation', function () {
       expect(spy.getCall(0).args[0]).
              equal('homebridge-http-rgb-push');
       expect(spy.getCall(0).args[1]).
-             equal('HTTP-RGB');
+             equal('HTTP-RGB-PUSH');
    });
 
    it('constructor registers to didFinishLaunching event', function () {
