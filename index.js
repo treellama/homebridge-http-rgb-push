@@ -1,22 +1,30 @@
-const packageJSON = require('./package.json');
-const informationManufacturer = 'Sander van Woensel';
-const informationModel = 'homebridge-http-rgb-push';
+// -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+const PACKAGE_JSON = require('./package.json');
+const MANUFACTURER = 'Sander van Woensel';
+const MODEL = 'homebridge-http-rgb-push';
 
+// -----------------------------------------------------------------------------
+// Module variables
+// -----------------------------------------------------------------------------
 var Service, Characteristic;
 var request = require('request');
-let api
+var api;
 
-/**
- * @module homebridge
- * @param {object} homebridge Export functions required to create a
- *                            new instance of this plugin.
- */
+//! @module homebridge
+//! @param {object} homebridge Export functions required to create a
+//!    new instance of this plugin.
 module.exports = function(homebridge){
+    api = homebridge;
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory(informationModel, 'HTTP-RGB', HTTP_RGB);
-    api = homebridge;
+    homebridge.registerAccessory(MODEL, 'HTTP-RGB', HTTP_RGB);
 };
+
+// -----------------------------------------------------------------------------
+// Module functions
+// -----------------------------------------------------------------------------
 
 /**
  * Parse the config and instantiate the object.
@@ -55,7 +63,7 @@ function HTTP_RGB(log, config) {
                this.switch.status.bodyRegEx = new RegExp(config.switch.status.bodyRegEx);
             }
             else {
-               this.log.warn("Property 'switch.status.bodyRegEx' was provided in an unsupported type. Using default one!");
+               this.log("Property 'switch.status.bodyRegEx' was provided in an unsupported type. Using default one!");
             }
         } else {
             this.switch.status.url         = config.switch.status;
@@ -76,7 +84,7 @@ function HTTP_RGB(log, config) {
         } else {
             this.switch.powerOff.set_url   = config.switch.powerOff;
         }
-        
+
         // Register notification server.
         api.on('didFinishLaunching', function() {
            // Check if notificationRegistration is set and user specified notificationID.
@@ -84,13 +92,13 @@ function HTTP_RGB(log, config) {
            if (api.notificationRegistration && typeof api.notificationRegistration === "function" &&
                config.switch.notificationID) {
                try {
-                   api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
+                  api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
                } catch (error) {
                    // notificationID is already taken.
                }
            }
         }.bind(this));
-    
+
     }
 
     // Local caching of HSB color space for RGB callback
@@ -127,12 +135,11 @@ function HTTP_RGB(log, config) {
 }
 
 /**
- *
  * @augments HTTP_RGB
  */
 HTTP_RGB.prototype = {
 
-    /** Required Functions **/
+    // Required Functions
     identify: function(callback) {
         this.log('Identify requested!');
         callback();
@@ -144,9 +151,9 @@ HTTP_RGB.prototype = {
         var informationService = new Service.AccessoryInformation();
 
         informationService
-            .setCharacteristic(Characteristic.Manufacturer, informationManufacturer)
-            .setCharacteristic(Characteristic.Model, informationModel)
-            .setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
+            .setCharacteristic(Characteristic.Manufacturer, MANUFACTIRER)
+            .setCharacteristic(Characteristic.Model, MODEL)
+            .setCharacteristic(Characteristic.FirmwareRevision, PACKAGE_JSON.version);
 
         switch (this.serviceCategory) {
             case 'Light':
@@ -220,10 +227,10 @@ HTTP_RGB.prototype = {
      */
    handleNotification: function (jsonRequest) {
         const service = jsonRequest.service;
-        
+
         const characteristic = jsonRequest.characteristic;
         const value = jsonRequest.value;
-        
+
         let characteristicType;
         switch (characteristic) {
             case "On":
@@ -233,7 +240,7 @@ HTTP_RGB.prototype = {
                 this.log("Encountered unknown characteristic when handling notification: " + jsonRequest.characteristic);
                 return;
         }
- 
+
         this.ignoreNextSetPowerState = true; // See method setPowerStatus().
         this.service.setCharacteristic(characteristicType, value); // This will also call setPowerStatus() indirectly.
     },
@@ -278,8 +285,8 @@ HTTP_RGB.prototype = {
             callback(new Error("The 'switch' section in your configuration is incorrect."));
             return;
         }
-        
-        // Prevent an infinite loop when setCharacteristic() from 
+
+        // Prevent an infinite loop when setCharacteristic() from
         // handleNotification() also indirectly calls setPowerState.
         if (this.ignoreNextSetPowerState) {
             this.ignoreNextSetPowerState = false;
@@ -503,7 +510,8 @@ HTTP_RGB.prototype = {
         }.bind(this));
     },
 
-    /** Utility Functions **/
+    // Utility Functions
+
     /**
      * Perform an HTTP request.
      *
