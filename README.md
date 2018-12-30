@@ -165,7 +165,7 @@ remove the brightness component from the config.
 | `name` | The name of your RGB accessory. It will appear in the Home app | "RGB Light" |
 | `service` | `"Light"` or `"Switch"` |  |
 | `timeout` _(optional)_ | Time (in milli seconds) until the accessory will be marked as "Not Responding" if it is unreachable.| 5000 |
-| `http_method` _(optional)_ | The HTTP method used for set requests. | "GET" |
+| `http_method` _(optional)_ | The HTTP method used for set requests only. Get HTTP requests are fixed to 'GET' for now. | "GET" |
 | `username` _(optional)_ | Username if http authentication is enabled on the RGB device | |
 | `password` _(optional)_ | Password if http authentication is enabled on the RGB device | |
 | `notificationID` _(optional)_ | Identifier to use when device sends push notifications. See [Push notifications](#push-responses-device-pushes-updates)  | |
@@ -226,7 +226,7 @@ This can be realized by supplying the `notificationID` as part of this accesory'
 Your device should then push the `On` `characteristic` towards the notification server.
 E.g. a POST request towards `http://<homebridge-host>:<notification-server-port>/<notificationID>` with the following
 body:
-   
+
 ```
 {
    "characteristic": "On",
