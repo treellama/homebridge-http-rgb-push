@@ -195,6 +195,7 @@ remove the brightness component from the config.
 | --- | --- |
 | `status` | URL to get RGB current brightness (`0`-`100`(%)) |
 | `url` | URL to set the current brightness of the RGB device (`0`-`100`(%)) |
+| `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
 
 ### Color object
 | Key | Description |
@@ -202,6 +203,7 @@ remove the brightness component from the config.
 | `status` | URL to get RGB current colour (HEX value) |
 | `url` | URL to set the RGB colour value (HEX value) |
 | `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`) |
+| `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
 
 
 # Device responses
