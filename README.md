@@ -52,7 +52,7 @@ sudo npm uninstall -g homebridge-http-rgb-push
 
     "accessories": [
         {
-            "accessory": "HTTP-RGB",
+            "accessory": "HTTP-RGB-PUSH",
             "name": "RGB Led Strip",
             "service": "Light",
             "timeout": 3000,
@@ -80,7 +80,7 @@ sudo npm uninstall -g homebridge-http-rgb-push
 
     "accessories": [
         {
-            "accessory": "HTTP-RGB",
+            "accessory": "HTTP-RGB-PUSH",
             "name": "Single Color Light",
             "service": "Light",
 
@@ -96,7 +96,7 @@ sudo npm uninstall -g homebridge-http-rgb-push
 
     "accessories": [
         {
-            "accessory": "HTTP-RGB",
+            "accessory": "HTTP-RGB-PUSH",
             "name": "Single Color Light",
             "service": "Light",
 
@@ -117,7 +117,7 @@ sudo npm uninstall -g homebridge-http-rgb-push
 
     "accessories": [
         {
-            "accessory": "HTTP-RGB",
+            "accessory": "HTTP-RGB-PUSH",
             "name": "Single Color Light",
             "service": "Light",
 
@@ -142,7 +142,7 @@ remove the brightness component from the config.
 
     "accessories": [
         {
-            "accessory": "HTTP-RGB",
+            "accessory": "HTTP-RGB-PUSH",
             "name": "JSON body matching",
             "service": "Light",
 
@@ -162,7 +162,7 @@ remove the brightness component from the config.
 
 | Key | Description | Default |
 | --- | --- | --- |
-| `accessory` | Must be "HTTP-RGB" | |
+| `accessory` | Must be "HTTP-RGB-PUSH" | |
 | `name` | The name of your RGB accessory. It will appear in the Home app | "RGB Light" |
 | `service` | `"Light"` or `"Switch"` |  |
 | `timeout` _(optional)_ | Time (in milli seconds) until the accessory will be marked as "Not Responding" if it is unreachable.| 5000 |
