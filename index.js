@@ -1,10 +1,12 @@
+// ISC License - Copyright 2018, Sander van Woensel
+
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
 const PACKAGE_JSON = require('./package.json');
-const MANUFACTURER = PACKAGE_JSON.author.name  bla bla'Sander van Woensel';
-const MODEL = PACKAGE_JSON.name;
+const MANUFACTURER = PACKAGE_JSON.author.name;
 const SERIAL_NUMBER = '001';
+const MODEL = PACKAGE_JSON.name;
 const FIRMWARE_REVISION = PACKAGE_JSON.version;
 
 // -----------------------------------------------------------------------------

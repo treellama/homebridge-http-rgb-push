@@ -1,3 +1,5 @@
+// ISC License - Copyright 2018, Sander van Woensel
+
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var sut = require('../index.js');
@@ -182,5 +184,38 @@ describe('Get power state', function () {
       expect(this.homebridgeCallback.firstCall.args[1]).equals(true);
       expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['power is currently %s', 'ON']);
    });
+
+});
+
+
+// -----------------------------------------------------------------------------
+describe('Get services', function () {
+
+   beforeEach(function () {
+      // 1. Arrange
+      this.testConfig = new TestConfig();
+
+      // This will also make sure to reset the embedded Sinon stubs.
+      this.homebridgeStub = new (require('./homebridge.stub.js'))(this.testConfig);
+      sut(this.homebridgeStub);
+
+
+   });
+
+   it('contains model, manufacturer, serial number and firmware revision sourced from package.json', function() {
+      // 1. Arrange
+      const PACKAGE = require('../package.json');
+
+      // 2. Act
+      var services = this.homebridgeStub.accessory.getServices();
+
+      // 3. Assert
+      expect(services[0].setCharacteristic.firstCall.lastArg).to.equal(PACKAGE.author.name);
+      expect(services[0].setCharacteristic.secondCall.lastArg).to.equal("001");
+      expect(services[0].setCharacteristic.thirdCall.lastArg).to.equal(PACKAGE.name);
+      expect(services[0].setCharacteristic.lastCall.lastArg).to.equal(PACKAGE.version);
+   });
+
+
 
 });

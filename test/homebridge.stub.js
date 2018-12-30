@@ -1,3 +1,5 @@
+// ISC License - Copyright 2018, Sander van Woensel
+
 var sinon = require('sinon');
 
 //! Homebridge stub.
@@ -7,8 +9,24 @@ module.exports = function(config) {
    this.logger = sinon.stub();
 
    this.hap = {
-      Service: null,
-      Characteristic: null
+      Service: {
+         AccessoryInformation: function() {
+            this.setCharacteristic = sinon.stub().returnsThis();
+         },
+         Lightbulb: function() {
+            this.getCharacteristic = sinon.stub().returnsThis();
+            this.on = sinon.stub().returnsThis();
+            this.addCharacteristic = sinon.stub().returnsThis();
+         }
+      },
+
+      Characteristic: {
+         Manufacturer: 0, SerialNumber: 1, Model: 2, FirmwareRevision: 3,
+         On: 4,
+         Hue: sinon.stub(),
+         Saturation: sinon.stub(),
+         Brightness: sinon.stub()
+      }
    };
 
    //! Construct and store accessory for access during test.
