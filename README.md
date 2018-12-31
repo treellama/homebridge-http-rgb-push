@@ -27,11 +27,7 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
 ## Installation
 
 1. Install homebridge using: `npm install -g homebridge`
-2. Install homebridge-http using:
-`sudo npm install -g git+https://github.com/QuickSander/homebridge-http-rgb-push.git`
-or
-`sudo npm install -g homebridge-http-rgb-push`
-
+2. Install homebridge-http-rgb-push using: `sudo npm install -g homebridge-http-rgb-push`
 3. Update your configuration file.  See below for examples.
 
 Note: See [Installing packages globally](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) when you experience
@@ -167,8 +163,8 @@ remove the brightness component from the config.
 | `service` | `"Light"` or `"Switch"` |  |
 | `timeout` _(optional)_ | Time (in milli seconds) until the accessory will be marked as "Not Responding" if it is unreachable.| 5000 |
 | `http_method` _(optional)_ | The HTTP method used for set requests only. Get HTTP requests are fixed to 'GET' for now. | "GET" |
-| `username` _(optional)_ | Username if http authentication is enabled on the RGB device | |
-| `password` _(optional)_ | Password if http authentication is enabled on the RGB device | |
+| `username` _(optional)_ | Username if http authentication is enabled on the RGB device. | |
+| `password` _(optional)_ | Password if http authentication is enabled on the RGB device. | |
 | `notificationID` _(optional)_ | Identifier to use when device sends push notifications. See [Push notifications](#push-responses-device-pushes-updates)  | |
 | `notificationPasword` _(optional)_ | Password to use when device sends push notifications.  | |
 | `switch` | A [switch object](#switch-object) | - |
@@ -237,5 +233,5 @@ body:
 }
 ```
 
-To get more details about the push configuration have a look at this
+To get more details about the push configuration have a look at the notification server's
 [README](https://github.com/Supereg/homebridge-http-notification-server).
