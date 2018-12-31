@@ -1,4 +1,7 @@
 // ISC License - Copyright 2018, Sander van Woensel
+// TODO: colorsys usage?
+//       get rid of all capitals accessory name.
+//       enable coverage measurement.
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -199,7 +202,7 @@ HttpRgbPush.prototype = {
 
             case 'Switch':
                 this.log('creating Switch');
-                vthis.service = new Service.Switch(this.name);
+                this.service = new Service.Switch(this.name);
 
                 if (this.switch.status) {
                     this.service
