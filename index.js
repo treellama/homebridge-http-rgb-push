@@ -1,6 +1,5 @@
 // ISC License - Copyright 2018, Sander van Woensel
 // TODO: colorsys usage?
-//       get rid of all capitals accessory name.
 //       enable coverage measurement.
 
 // -----------------------------------------------------------------------------
@@ -26,7 +25,7 @@ module.exports = function(homebridge){
     api = homebridge;
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory(MODEL, 'HTTP-RGB-PUSH', HttpRgbPush);
+    homebridge.registerAccessory(MODEL, 'HttpPushRgb', HttpPushRgb);
 };
 
 // -----------------------------------------------------------------------------
@@ -40,10 +39,8 @@ module.exports = function(homebridge){
  * @param {function} log Logging function.
  * @param {object} config The configuration object.
  */
-function HttpRgbPush(log, config) {
+function HttpPushRgb(log, config) {
 
-    // The logging function is required if you want your function to output
-    // any information to the console in a controlled and organized manner.
     this.log = log;
 
     this.service                       = null;
@@ -141,9 +138,9 @@ function HttpRgbPush(log, config) {
 }
 
 /**
- * @augments HttpRgbPush
+ * @augments HttpPushRgb
  */
-HttpRgbPush.prototype = {
+HttpPushRgb.prototype = {
 
     // Required Functions
     identify: function(callback) {
