@@ -18,6 +18,11 @@ var Service, Characteristic;
 var request = require('request');
 var api;
 
+// -----------------------------------------------------------------------------
+// Exports
+// -----------------------------------------------------------------------------
+
+
 //! @module homebridge
 //! @param {object} homebridge Export functions required to create a
 //!    new instance of this plugin.
