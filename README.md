@@ -233,7 +233,7 @@ Your device should then push the `On` `characteristic` towards the notification 
 E.g. a POST request towards `http://<homebridge-host>:<notification-server-port>/<notificationID>` with the following
 body:
 
-```
+```json
 {
    "characteristic": "On",
    "value": true
