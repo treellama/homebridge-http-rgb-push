@@ -21,6 +21,8 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
   updated state after reboot.
 * Supports regular expression pattern matching for on/off switches to determine whether the body reflects an on or off status.
 * Fixes a bug which causes the original plugin to not report the correct manufacturer, make and model towards HomeKit.
+* Briefly turn off/on or on/off the light/switch to locate the device's physical
+location when HomeKit requests 'identify'.
 * Added timeout parameter to prevent HomeBridge from getting stuck on a single unresponsive device. Credits: [Tommrodrigues/homebridge-better-http-rgb](https://github.com/Tommrodrigues/homebridge-better-http-rgb).
 * README rewrite and corrections.
 

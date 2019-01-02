@@ -11,6 +11,8 @@ const SERIAL_NUMBER = '001';
 const MODEL = PACKAGE_JSON.name;
 const FIRMWARE_REVISION = PACKAGE_JSON.version;
 
+const IDENTIFY_BLINK_DELAY_MS = 250; // [ms]
+
 // -----------------------------------------------------------------------------
 // Module variables
 // -----------------------------------------------------------------------------
@@ -148,9 +150,22 @@ function HttpPushRgb(log, config) {
 HttpPushRgb.prototype = {
 
     // Required Functions
+
+    /**
+     * Blink device to allow user to identify its location.
+     */
     identify: function(callback) {
         this.log('Identify requested!');
-        callback();
+
+        this.getPowerState( (error, onState) => {
+
+           this.setPowerState(!onState, (error, responseBody) => {
+               // Ignore any possible error, just continue as if nothing happened.
+               setTimeout(() => {
+                  this.setPowerState(onState, callback);
+               }, IDENTIFY_BLINK_DELAY_MS);
+           });
+        });
     },
 
     getServices: function() {
@@ -165,7 +180,7 @@ HttpPushRgb.prototype = {
         switch (this.serviceCategory) {
             case 'Light':
                 this.log('Creating Lightbulb');
-                this.service  = new Service.Lightbulb(this.name);
+                this.service = new Service.Lightbulb(this.name);
 
                 if (this.switch.status) {
                     this.service
