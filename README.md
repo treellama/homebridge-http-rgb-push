@@ -46,89 +46,96 @@ sudo npm uninstall -g homebridge-http-rgb-push
 
 ### Full RGB Device
 
-    "accessories": [
-        {
-            "accessory": "HttpPushRgb",
-            "name": "RGB Led Strip",
-            "service": "Light",
-            "timeout": 3000,
+```json
+ "accessories": [
+     {
+         "accessory": "HttpPushRgb",
+         "name": "RGB Led Strip",
+         "service": "Light",
+         "timeout": 3000,
 
-            "switch": {
-                "status": "http://localhost/api/v1/status",
-                "powerOn": "http://localhost/api/v1/on",
-                "powerOff": "http://localhost/api/v1/off"
-            },
+         "switch": {
+             "status": "http://localhost/api/v1/status",
+             "powerOn": "http://localhost/api/v1/on",
+             "powerOff": "http://localhost/api/v1/off"
+         },
 
-            "brightness": {
-                "status": "http://localhost/api/v1/brightness",
-                "url": "http://localhost/api/v1/brightness/%s"
-            },
+         "brightness": {
+             "status": "http://localhost/api/v1/brightness",
+             "url": "http://localhost/api/v1/brightness/%s"
+         },
 
-            "color": {
-                "status": "http://localhost/api/v1/set",
-                "url": "http://localhost/api/v1/set/%s",
-                "brightness": true
-            }
-        }
-    ]
+         "color": {
+             "status": "http://localhost/api/v1/set",
+             "url": "http://localhost/api/v1/set/%s",
+             "brightness": true
+         }
+     }
+ ]
+ ```
 
 ### Single Color Light that only turns "off" and "on"
 
-    "accessories": [
-        {
-            "accessory": "HttpPushRgb",
-            "name": "Single Color Light",
-            "service": "Light",
+```json
+ "accessories": [
+     {
+         "accessory": "HttpPushRgb",
+         "name": "Single Color Light",
+         "service": "Light",
 
-            "switch": {
-                "status": "http://localhost/api/v1/status",
-                "powerOn": "http://localhost/api/v1/on",
-                "powerOff": "http://localhost/api/v1/off"
-            }
-        }
-    ]
+         "switch": {
+             "status": "http://localhost/api/v1/status",
+             "powerOn": "http://localhost/api/v1/on",
+             "powerOff": "http://localhost/api/v1/off"
+         }
+     }
+ ]
+ ```
 
 ### Single Color Light with Brightness
+```json
+ "accessories": [
+     {
+         "accessory": "HttpPushRgb",
+         "name": "Single Color Light",
+         "service": "Light",
 
-    "accessories": [
-        {
-            "accessory": "HttpPushRgb",
-            "name": "Single Color Light",
-            "service": "Light",
+         "switch": {
+             "status": "http://localhost/api/v1/status",
+             "powerOn": "http://localhost/api/v1/on",
+             "powerOff": "http://localhost/api/v1/off"
+         },
 
-            "switch": {
-                "status": "http://localhost/api/v1/status",
-                "powerOn": "http://localhost/api/v1/on",
-                "powerOff": "http://localhost/api/v1/off"
-            },
-
-            "brightness": {
-                "status": "http://localhost/api/v1/brightness",
-                "url": "http://localhost/api/v1/brightness/%s"
-            }
-        }
-    ]
+         "brightness": {
+             "status": "http://localhost/api/v1/brightness",
+             "url": "http://localhost/api/v1/brightness/%s"
+         }
+     }
+ ]
+ ```
 
 ### RGB Light without Brightness
 
-    "accessories": [
-        {
-            "accessory": "HttpPushRgb",
-            "name": "Single Color Light",
-            "service": "Light",
+```json
+ "accessories": [
+     {
+         "accessory": "HttpPushRgb",
+         "name": "Single Color Light",
+         "service": "Light",
 
-            "switch": {
-                "status": "http://localhost/api/v1/status",
-                "powerOn": "http://localhost/api/v1/on",
-                "powerOff": "http://localhost/api/v1/off"
-            },
+         "switch": {
+             "status": "http://localhost/api/v1/status",
+             "powerOn": "http://localhost/api/v1/on",
+             "powerOff": "http://localhost/api/v1/off"
+         },
 
-            "color": {
-                "status": "http://localhost/api/v1/set",
-                "url": "http://localhost/api/v1/set/%s"
-            }
-        }
-    ]
+         "color": {
+             "status": "http://localhost/api/v1/set",
+             "url": "http://localhost/api/v1/set/%s"
+         }
+     }
+ ]
+ ```
 
 This normally will not occur, however, you may not want your application to
 display a "brightness" slider to the user.  In this case, you will want to
