@@ -57,7 +57,7 @@ function HttpPushRgb(log, config) {
     this.http_method                   = config.http_method               || 'GET';
     this.username                      = config.username                  || '';
     this.password                      = config.password                  || '';
-    this.timeout                       = config.timeout                   || 5000;
+    this.timeout                       = config.timeout                   || 10000;
 
     // Handle the basic on/off
     this.switch = { powerOn: {}, powerOff: {}, status: {} };

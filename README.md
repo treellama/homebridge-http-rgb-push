@@ -170,7 +170,7 @@ remove the brightness component from the config.
 | `accessory` | Must be "HttpPushRgb" | |
 | `name` | The name of your RGB accessory. It will appear in the Home app | "RGB Light" |
 | `service` | `"Light"` or `"Switch"` |  |
-| `timeout` _(optional)_ | Time (in milli seconds) until the accessory will be marked as "Not Responding" if it is unreachable.| 5000 |
+| `timeout` _(optional)_ | Time (in milli seconds) until the accessory will be marked as "Not Responding" if it is unreachable.| 10000 |
 | `http_method` _(optional)_ | The HTTP method used for set requests only. Get HTTP requests are fixed to 'GET' for now. | "GET" |
 | `username` _(optional)_ | Username if http authentication is enabled on the RGB device. | |
 | `password` _(optional)_ | Password if http authentication is enabled on the RGB device. | |
