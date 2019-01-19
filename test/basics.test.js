@@ -21,7 +21,7 @@ var TestConfig = function() {
         "color": {
             "status": "http://localhost:8080/color/status",
             "url": "http://localhost:8080/color/set/%s",
-            "brightness": true
+            "brightness": false
         },
         "brightness": {
             "status": "http://localhost:8080/brightness/status",
@@ -200,6 +200,80 @@ describe('Get power state', function () {
 
 });
 
+// -----------------------------------------------------------------------------
+describe('Set brightness', function () {
+
+   beforeEach(function () {
+      // 1. Arrange
+      this.testConfig = new TestConfig();
+
+      // This will also make sure to reset the embedded Sinon stubs.
+      this.homebridgeStub = new (require('./homebridge.stub.js'))(this.testConfig);
+      sut(this.homebridgeStub);
+
+      this.homebridgeStub.accessory._httpRequest = sinon.stub();
+      this.homebridgeCallback = sinon.stub();
+
+   });
+
+
+   it('sends HTTP GET request with correct URL', function () {
+      // 1. Arrange
+      var url = this.testConfig.brightness.url.replace('%s', 100);
+
+      // 2. Act
+      this.homebridgeStub.accessory.setBrightness(100, this.homebridgeCallback);
+
+      // 3. Assert
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[0]).equals(url);
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[1]).to.be.empty; // Body empty.
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[2]).equals('GET');
+   });
+
+   it('replies to Homebridge on valid HTTP GET device response "100"', function () {
+      // 2. Act
+      // Trigger filling of callback
+      this.homebridgeStub.accessory.setBrightness(100, this.homebridgeCallback);
+      // Call collected HTTP response callback to simulate device response.
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, '100');
+
+      // 3. Assert
+      expect(this.homebridgeCallback.calledOnce).to.be.true;
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['setBrightness() successfully set to %s %', 100]);
+   });
+
+   it('sets RGB instead of brightness to Homebridge when config.color.brightness equals true', function () {
+      // 1. Arrange
+      this.homebridgeStub.accessory.color.brightness = true;
+
+      // 2. Act
+      // Trigger filling of callback
+      this.homebridgeStub.accessory.setBrightness(100, this.homebridgeCallback);
+      // Call collected HTTP response callback to simulate device response.
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, '100');
+
+      // 3. Assert
+      expect(this.homebridgeCallback.calledOnce).to.be.true; // But now inside _setRGB.
+      expect(this.homebridgeStub.logger.firstCall.args[0]).deep.equals('_setRGB converting H:%s S:%s B:%s to RGB:%s ...');
+      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['... _setRGB() successfully set to #%s', 'FFFFFF']);
+   });
+
+   it('replies an Error object with message "Received HTTP error code 500." to Homebridge on HTTP GET device response status code 500', function () {
+      // 1. Arrange
+      const HTTP_ERROR_STATUS_CODE = 500;
+
+      // 2. Act
+      // Trigger filling of callback
+      this.homebridgeStub.accessory.setBrightness(100, this.homebridgeCallback);
+      // Call collected HTTP response callback to simulate device response.
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: HTTP_ERROR_STATUS_CODE}, 'Dummy error');
+
+      // 3. Assert
+      expect(this.homebridgeCallback.firstCall.args[0]).to.be.instanceOf(Error).and.have.property('message', 'Received HTTP error code '+HTTP_ERROR_STATUS_CODE+': "Dummy error"');
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['setBrightness() returned HTTP error code: %s: "%s"', HTTP_ERROR_STATUS_CODE, 'Dummy error']);
+   });
+
+});
 
 // -----------------------------------------------------------------------------
 describe('Get services', function () {

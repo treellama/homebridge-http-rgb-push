@@ -371,7 +371,7 @@ HttpPushRgb.prototype = {
         if (!this.color || !this.color.brightness) {
             var url = this.brightness.set_url.replace('%s', level);
 
-            this._httpRequest(url, '', this.brightness.http_method, function(error, response, body) {
+            this._httpRequest(url, '', this.brightness.http_method, function(error, response, responseBody) {
                 if (!this._handleHttpErrorResponse('setBrightness()', error, response, responseBody, callback)) {
                     this.log('setBrightness() successfully set to %s %', level);
                     callback();
@@ -503,7 +503,7 @@ HttpPushRgb.prototype = {
 
         this.log('_setRGB converting H:%s S:%s B:%s to RGB:%s ...', this.cache.hue, this.cache.saturation, this.cache.brightness, r + g + b);
 
-        this._httpRequest(url, '', this.color.http_method, function(error, response, body) {
+        this._httpRequest(url, '', this.color.http_method, function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('_setRGB()', error, response, responseBody, callback)) {
                 this.log('... _setRGB() successfully set to #%s', r + g + b);
                 callback();
