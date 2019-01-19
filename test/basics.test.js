@@ -155,7 +155,7 @@ describe('Get power state', function () {
    it('replies "true" to Homebridge on valid HTTP GET device response "1"', function () {
       // 2. Act
       // Call collected HTTP response callback to simulate device response.
-      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, undefined, '1');
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, '1');
 
       // 3. Assert
       expect(this.homebridgeCallback.firstCall.args[1]).equals(true);
@@ -165,7 +165,7 @@ describe('Get power state', function () {
    it('replies "false" to Homebridge on valid HTTP GET device response "0"', function () {
       // 2. Act
       // Call collected HTTP response callback to simulate device response.
-      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, undefined, '0');
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, '0');
 
       // 3. Assert
       expect(this.homebridgeCallback.firstCall.args[1]).equals(false);
@@ -178,11 +178,24 @@ describe('Get power state', function () {
 
       // 2. Act
       // Call collected HTTP response callback to simulate device response.
-      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, undefined, '{"switch": "on"}');
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, '{"switch": "on"}');
 
       // 3. Assert
       expect(this.homebridgeCallback.firstCall.args[1]).equals(true);
       expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['power is currently %s', 'ON']);
+   });
+
+   it('replies an Error object with message "Got HTTP error code 404." to Homebridge on HTTP GET device response status code 404', function () {
+      // 1. Arrange
+      const HTTP_ERROR_STATUS_CODE = 404;
+
+      // 2. Act
+      // Call collected HTTP response callback to simulate device response.
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: HTTP_ERROR_STATUS_CODE}, 'Dummy error');
+
+      // 3. Assert
+      expect(this.homebridgeCallback.firstCall.args[0]).to.be.instanceOf(Error).and.have.property('message', 'Received HTTP error code '+HTTP_ERROR_STATUS_CODE+': "Dummy error"');
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['getPowerState() returned HTTP error code: %s: "%s"', HTTP_ERROR_STATUS_CODE, 'Dummy error']);
    });
 
 });
