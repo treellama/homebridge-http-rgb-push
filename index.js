@@ -282,13 +282,10 @@ HttpPushRgb.prototype = {
         var url = this.switch.status.url;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
-            if (error) {
-                this.log('getPowerState() failed: %s', error.message);
-                callback(error);
-            } else {
-                var powerOn = this.switch.status.bodyRegEx.test(responseBody)
-                this.log('power is currently %s', powerOn ? 'ON' : 'OFF');
-                callback(null, powerOn);
+            if (!this._handleHttpErrorResponse('getPowerState()', error, response, responseBody, callback)) {
+               var powerOn = this.switch.status.bodyRegEx.test(responseBody)
+               this.log('power is currently %s', powerOn ? 'ON' : 'OFF');
+               callback(null, powerOn);
             }
         }.bind(this));
     },
@@ -325,10 +322,7 @@ HttpPushRgb.prototype = {
         }
 
         this._httpRequest(url, body, this.http_method, function(error, response, responseBody) {
-            if (error) {
-                this.log('setPowerState() failed: %s', error.message);
-                callback(error);
-            } else {
+            if (!this._handleHttpErrorResponse('setPowerState()', error, response, responseBody, callback)) {
                 this.log('setPowerState() successfully set to %s', state ? 'ON' : 'OFF');
                 callback(undefined, responseBody);
             }
@@ -349,10 +343,7 @@ HttpPushRgb.prototype = {
 
         if (this.brightness) {
             this._httpRequest(this.brightness.status, '', 'GET', function(error, response, responseBody) {
-                if (error) {
-                    this.log('getBrightness() failed: %s', error.message);
-                    callback(error);
-                } else {
+                if (!this._handleHttpErrorResponse('getBrightness()', error, response, responseBody, callback)) {
                     var level = parseInt(responseBody);
                     this.log('brightness is currently at %s %', level);
                     callback(null, level);
@@ -381,10 +372,7 @@ HttpPushRgb.prototype = {
             var url = this.brightness.set_url.replace('%s', level);
 
             this._httpRequest(url, '', this.brightness.http_method, function(error, response, body) {
-                if (error) {
-                    this.log('setBrightness() failed: %s', error);
-                    callback(error);
-                } else {
+                if (!this._handleHttpErrorResponse('setBrightness()', error, response, responseBody, callback)) {
                     this.log('setBrightness() successfully set to %s %', level);
                     callback();
                 }
@@ -408,10 +396,7 @@ HttpPushRgb.prototype = {
         var url = this.color.status;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
-            if (error) {
-                this.log('... getHue() failed: %s', error.message);
-                callback(error);
-            } else {
+            if (!this._handleHttpErrorResponse('getHue()', error, response, responseBody, callback)) {
                 var rgb = responseBody;
                 var levels = this._rgbToHsl(
                     parseInt(rgb.substr(0,2),16),
@@ -463,10 +448,7 @@ HttpPushRgb.prototype = {
         var url = this.color.status;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
-            if (error) {
-                this.log('... getSaturation() failed: %s', error.message);
-                callback(error);
-            } else {
+            if (!this._handleHttpErrorResponse('getSaturation()', error, response, responseBody, callback)) {
                 var rgb = responseBody;
                 var levels = this._rgbToHsl(
                     parseInt(rgb.substr(0,2),16),
@@ -522,10 +504,7 @@ HttpPushRgb.prototype = {
         this.log('_setRGB converting H:%s S:%s B:%s to RGB:%s ...', this.cache.hue, this.cache.saturation, this.cache.brightness, r + g + b);
 
         this._httpRequest(url, '', this.color.http_method, function(error, response, body) {
-            if (error) {
-                this.log('... _setRGB() failed: %s', error);
-                callback(error);
-            } else {
+            if (!this._handleHttpErrorResponse('_setRGB()', error, response, responseBody, callback)) {
                 this.log('... _setRGB() successfully set to #%s', r + g + b);
                 callback();
             }
@@ -558,6 +537,25 @@ HttpPushRgb.prototype = {
             callback(error, response, body);
         });
     },
+
+    /**
+     * Verify if response code equals '200', otherwise log error and callback
+     * with a new Error object.
+     * @param  {String}   functionStr Description used to create log and error message.
+     * @param  {Object}   error       Received error from client.
+     * @param  {Object}   response    Received reponse from client.
+     * @param  {Function} callback    Reply function to call when error ocurred.
+     * @return {Boolean}              true: Error occurred, false otherwise
+     */
+    _handleHttpErrorResponse: function(functionStr, error, response, responseBody, callback) {
+      if (error) {
+          this.log(functionStr +' failed: %s', error.message);
+          callback(error);
+      } else if (response.statusCode != 200) {
+         this.log(functionStr + ' returned HTTP error code: %s: "%s"', response.statusCode, responseBody);
+         callback( new Error("Received HTTP error code " + response.statusCode + ': "' + responseBody + '"') );
+      }
+   },
 
     /**
      * Converts an HSV color value to RGB. Conversion formula
