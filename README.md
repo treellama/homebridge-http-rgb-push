@@ -25,6 +25,7 @@ This fork differs from the original [jnovack/homebridge-better-http-rgb](https:/
 * Briefly turn off/on or on/off the light/switch to locate the device's physical
 location when HomeKit requests 'identify'.
 * Added timeout parameter to prevent HomeBridge from getting stuck on a single unresponsive device. Credits: [Tommrodrigues/homebridge-better-http-rgb](https://github.com/Tommrodrigues/homebridge-better-http-rgb).
+* Added error handling for non HTTP 200 status code replies.
 * README rewrite and corrections.
 
 ## Installation
@@ -208,7 +209,7 @@ remove the brightness component from the config.
 | --- | --- |
 | `status` | URL to get RGB current colour (HEX value) |
 | `url` | URL to set the RGB colour value (HEX value) |
-| `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`) |
+| `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`). When `true` brightness will be controllable in HomeKit but will be changed through changing RGB values. |
 | `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
 
 
