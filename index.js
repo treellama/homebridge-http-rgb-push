@@ -531,10 +531,9 @@ HttpPushRgb.prototype = {
             auth: {
                 user: this.username,
                 pass: this.password
-            }
-        },
-        function(error, response, body) {
-            callback(error, response, body);
+            }},
+            function(error, response, body) {
+               callback(error, response, body);
         });
     },
 
@@ -548,13 +547,17 @@ HttpPushRgb.prototype = {
      * @return {Boolean}              true: Error occurred, false otherwise
      */
     _handleHttpErrorResponse: function(functionStr, error, response, responseBody, callback) {
+      var errorOccurred = false;
       if (error) {
           this.log(functionStr +' failed: %s', error.message);
           callback(error);
+          errorOccurred = true;
       } else if (response.statusCode != 200) {
          this.log(functionStr + ' returned HTTP error code: %s: "%s"', response.statusCode, responseBody);
          callback( new Error("Received HTTP error code " + response.statusCode + ': "' + responseBody + '"') );
+         errorOccurred = true;
       }
+      return errorOccurred;
    },
 
     /**
