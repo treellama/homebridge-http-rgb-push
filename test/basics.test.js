@@ -253,9 +253,9 @@ describe('Set brightness', function () {
       this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, '100');
 
       // 3. Assert
-      expect(this.homebridgeCallback.calledOnce).to.be.true; // But now inside _setRGB.
-      expect(this.homebridgeStub.logger.firstCall.args[0]).deep.equals('_setRGB converting H:%s S:%s B:%s to RGB:%s ...');
-      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['... _setRGB() successfully set to #%s', 'FFFFFF']);
+      expect(this.homebridgeCallback.calledOnce).to.be.true; // But now inside _buildRgbRequest.
+      expect(this.homebridgeStub.logger.firstCall.args[0]).deep.equals('_buildRgbRequest converting H:%s S:%s B:%s to RGB:%s ...');
+      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['... _setRGB() successfully set']);
    });
 
    it('replies an Error object with message "Received HTTP error code 500." to Homebridge on HTTP GET device response status code 500', function () {

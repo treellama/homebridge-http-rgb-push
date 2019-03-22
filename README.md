@@ -145,6 +145,54 @@ This normally will not occur, however, you may not want your application to
 display a "brightness" slider to the user.  In this case, you will want to
 remove the brightness component from the config.
 
+### Full RGB Device with advanced SET / GET Handling
+
+Following configuration is a real world example for a accessory that combines a shelly switch / relay with a hue light bulb. ON/OFF-Signals will be sent to the shelly switch. On the other hand, changes to brightness / color are going to the hue bulb.
+
+```json
+"accessories": [
+    {
+        "accessory": "HttpPushRgb",
+        "name": "Full RGB Device with advanced SET / GET Handling",
+        "service": "Light",
+        "timeout": 3000,
+        "switch": {
+            "notificationID": "47110815",
+            "status": {
+                "url": "http://192.168.0.110/status",
+                "bodyRegEx": "\"ison\":true"
+             },
+             "powerOn": "http://192.168.0.110/relay/0?turn=on",
+             "powerOff": "http://192.168.0.110/relay/0?turn=off"
+        },
+        "brightness": {
+            "status": {
+                "url": "http://192.168.0.120/api/<apikey>/lights/6/",
+                "bodyRegEx": "\"bri\":([0-9]+)"
+            },
+            "url": {
+                "url":"http://192.168.0.120/api/<apikey>/lights/6/state",
+                "body": "{\"bri\": %s}"
+            },
+            "http_method": "put",
+            "max": 254
+        },
+        "color": {
+            "status": {
+                "url": "http://192.168.0.120/api/<apikey>/lights/6/",
+                "bodyRegEx": "\"bri\":([0-9]+)"
+            },
+            "url": {
+                "url":"http://192.168.0.120/api/<apikey>/lights/6/state",
+                "body": "{\"xy\": [%xy-x,%xy-y]}"
+            },
+            "brightness": false,
+            "http_method": "put"
+        }
+    }
+]
+ ```
+
 ### Regular expression on-body matching
 
     "accessories": [
@@ -200,9 +248,23 @@ remove the brightness component from the config.
 
 | Key | Description |
 | --- | --- |
-| `status` | URL to get RGB current brightness (`0`-`100`(%)) |
-| `url` | URL to set the current brightness of the RGB device (`0`-`100`(%)) |
+| `status` | URL to get RGB current brightness or a [brightness status object](#brightness-status-object). |
+| `url` | URL to set the current brightness of the RGB device or a [brightness url object](#brightness-url-object). |
 | `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
+| `max`  _(optional)_ | This value specifies the maximum Integer for brightness. For example, Philips Hue returns 254 when brightness is at 100 % (default: 100)|
+
+#### Brightness status object
+| Key | Description |
+| --- | --- |
+| `url` | URL to retrieve brightness status |
+| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: "bri":([0-9]+) |
+
+#### Brightness url object
+| Key | Description |
+| --- | --- |
+| `url` | URL to set brightness status |
+| `body` | relevant, if the http_method is put/post. this body is sent to the url. you can use a placeholder (%s) within the body. example: {"bri": %s}  |
+
 
 ### Color object
 | Key | Description |
@@ -211,6 +273,18 @@ remove the brightness component from the config.
 | `url` | URL to set the RGB colour value (HEX value) |
 | `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`). When `true` brightness will be controllable in HomeKit but will be changed through changing RGB values. |
 | `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
+
+#### Color status object
+| Key | Description |
+| --- | --- |
+| `url` | URL to retrieve brightness status |
+| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: "bri":([0-9]+) |
+
+#### Color url object
+| Key | Description |
+| --- | --- |
+| `url` | URL to set color status |
+| `body` | relevant, if the http_method is put/post. this body will be sent to the url. you can use following placeholders: %s (hex-rgb), %xy-x, $xy-y. Example: {"xy": [%xy-x,%xy-y]}  |
 
 
 # Device responses
