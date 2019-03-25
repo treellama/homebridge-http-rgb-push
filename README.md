@@ -284,7 +284,7 @@ Following configuration is a real world example for a accessory that combines a 
 | Key | Description |
 | --- | --- |
 | `url` | URL to set color status |
-| `body` | relevant, if the http_method is put/post. this body will be sent to the url. you can use following placeholders: %s (hex-rgb), %xy-x, $xy-y. Example: {"xy": [%xy-x,%xy-y]}  |
+| `body` | relevant, if the http_method is put/post. this body will be sent to the url. you can use following placeholders: %s (hex-rgb), %xy-x, %xy-y. Example: {"xy": [%xy-x,%xy-y]}  |
 
 
 # Device responses
