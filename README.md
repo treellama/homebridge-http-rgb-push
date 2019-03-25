@@ -257,7 +257,7 @@ Following configuration is a real world example for a accessory that combines a 
 | Key | Description |
 | --- | --- |
 | `url` | URL to retrieve brightness status |
-| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: "bri":([0-9]+) |
+| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: `"bri":([0-9]+)` |
 
 #### Brightness url object
 | Key | Description |
