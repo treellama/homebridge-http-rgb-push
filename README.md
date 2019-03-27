@@ -263,7 +263,7 @@ Following configuration is a real world example for a accessory that combines a 
 | Key | Description |
 | --- | --- |
 | `url` | URL to set brightness status |
-| `body` | relevant, if the http_method is put/post. this body is sent to the url. you can use a placeholder (%s) within the body. example: {"bri": %s}  |
+| `body` | relevant, if the http_method is put/post. this body is sent to the url. you can use a placeholder (%s) within the body. example: `{"bri": %s}`  |
 
 
 ### Color object
