@@ -12,6 +12,7 @@ const MODEL = PACKAGE_JSON.name;
 const FIRMWARE_REVISION = PACKAGE_JSON.version;
 
 const IDENTIFY_BLINK_DELAY_MS = 250; // [ms]
+const DEFAULT_BRIGHTNESS_MAX = 100;
 
 // -----------------------------------------------------------------------------
 // Module variables
@@ -133,7 +134,7 @@ function HttpPushRgb(log, config) {
             this.brightness.set_url.body = '';
         }
         this.brightness.http_method    = config.brightness.http_method    || this.http_method;
-        this.brightness.max = config.brightness.max || 100;
+        this.brightness.max = config.brightness.max || DEFAULT_BRIGHTNESS_MAX;
         this.cache.brightness = 0;
     } else {
         this.brightness = false;
