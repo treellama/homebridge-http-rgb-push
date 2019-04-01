@@ -175,7 +175,7 @@ Following configuration is a real world example for a accessory that combines a 
                 "url":"http://192.168.0.120/api/<apikey>/lights/6/state",
                 "body": "{\"bri\": %s}"
             },
-            "http_method": "put",
+            "http_method": "`PUT`",
             "max": 254
         },
         "color": {
@@ -188,7 +188,7 @@ Following configuration is a real world example for a accessory that combines a 
                 "body": "{\"xy\": [%xy-x,%xy-y]}"
             },
             "brightness": false,
-            "http_method": "put"
+            "http_method": "PUT"
         }
     }
 ]
@@ -226,7 +226,7 @@ Following configuration is a real world example for a accessory that combines a 
 | `username` _(optional)_ | Username if http authentication is enabled on the RGB device. | |
 | `password` _(optional)_ | Password if http authentication is enabled on the RGB device. | |
 | `notificationID` _(optional)_ | Identifier to use when device sends push notifications. See [Push notifications](#push-responses-device-pushes-updates)  | |
-| `notificationPasword` _(optional)_ | Password to use when device sends push notifications.  | |
+| `notificationPassword` _(optional)_ | Password to use when device sends push notifications.  | |
 | `switch` | A [switch object](#switch-object) | - |
 | `brightness` | A [brightness object](#brightness-object) | - |
 | `color` | A [color object](#color-object) | - |
@@ -264,7 +264,7 @@ Following configuration is a real world example for a accessory that combines a 
 | Key | Description |
 | --- | --- |
 | `url` | URL to set brightness status |
-| `body` | relevant, if the http_method is put/post. this body is sent to the url. you can use a placeholder (`%s`) within the body. example: `{"bri": %s}`  |
+| `body` | relevant, if the http_method is PUT/POST. this body is sent to the url. you can use a placeholder (`%s`) within the body. example: `{"bri": %s}`  |
 
 
 ### Color object
@@ -275,17 +275,11 @@ Following configuration is a real world example for a accessory that combines a 
 | `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`). When `true` brightness will be controllable in HomeKit but will be changed through changing RGB values. |
 | `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
 
-#### Color status object
-| Key | Description |
-| --- | --- |
-| `url` | URL to retrieve brightness status |
-| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: `"bri":([0-9]+)` |
-
 #### Color url object
 | Key | Description |
 | --- | --- |
 | `url` | URL to set color status |
-| `body` | relevant, if the http_method is put/post. this body will be sent to the url. you can use following placeholders: `%s` (hex-rgb), `%xy-x`, `%xy-y`. Example: `{"xy": [%xy-x,%xy-y]}`  |
+| `body` | relevant, if the http_method is PUT/POST. this body will be sent to the url. you can use following placeholders: `%s` (hex-rgb), `%xy-x`, `%xy-y`. Example: `{"xy": [%xy-x,%xy-y]}` or `{"rgb": "%s"}` |
 
 
 # Device responses
