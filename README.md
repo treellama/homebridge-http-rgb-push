@@ -263,7 +263,7 @@ Following configuration is a real world example for a accessory that combines a 
 | Key | Description |
 | --- | --- |
 | `url` | URL to set brightness status |
-| `body` | relevant, if the http_method is put/post. this body is sent to the url. you can use a placeholder (%s) within the body. example: `{"bri": %s}`  |
+| `body` | relevant, if the http_method is put/post. this body is sent to the url. you can use a placeholder (`%s`) within the body. example: `{"bri": %s}`  |
 
 
 ### Color object
@@ -278,13 +278,13 @@ Following configuration is a real world example for a accessory that combines a 
 | Key | Description |
 | --- | --- |
 | `url` | URL to retrieve brightness status |
-| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: "bri":([0-9]+) |
+| `bodyRegEx` _(optional)_ | Regular expression to extract the brightness out of a response body. Example: `"bri":([0-9]+)` |
 
 #### Color url object
 | Key | Description |
 | --- | --- |
 | `url` | URL to set color status |
-| `body` | relevant, if the http_method is put/post. this body will be sent to the url. you can use following placeholders: %s (hex-rgb), %xy-x, %xy-y. Example: {"xy": [%xy-x,%xy-y]}  |
+| `body` | relevant, if the http_method is put/post. this body will be sent to the url. you can use following placeholders: `%s` (hex-rgb), `%xy-x`, `%xy-y`. Example: `{"xy": [%xy-x,%xy-y]}`  |
 
 
 # Device responses
