@@ -27,6 +27,7 @@ location when HomeKit requests 'identify'.
 * Added timeout parameter to prevent HomeBridge from getting stuck on a single unresponsive device. Credits: [Tommrodrigues/homebridge-better-http-rgb](https://github.com/Tommrodrigues/homebridge-better-http-rgb).
 * Added error handling for non HTTP 200 status code replies.
 * README rewrite and corrections.
+* Allow GET requests with body matching for colour and status. Credits: [Michael Mezger](https://github.com/mimez)
 
 ## Installation
 
