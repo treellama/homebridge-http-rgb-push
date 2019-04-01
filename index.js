@@ -12,6 +12,7 @@ const MODEL = PACKAGE_JSON.name;
 const FIRMWARE_REVISION = PACKAGE_JSON.version;
 
 const IDENTIFY_BLINK_DELAY_MS = 250; // [ms]
+const DEFAULT_BRIGHTNESS_MAX = 100;
 
 // -----------------------------------------------------------------------------
 // Module variables
@@ -19,6 +20,7 @@ const IDENTIFY_BLINK_DELAY_MS = 250; // [ms]
 var Service, Characteristic;
 var request = require('request');
 var api;
+var convert = require('color-convert');
 
 // -----------------------------------------------------------------------------
 // Exports
@@ -117,10 +119,22 @@ function HttpPushRgb(log, config) {
 
     // Handle brightness
     if (typeof config.brightness === 'object') {
-        this.brightness = {};
-        this.brightness.status         = config.brightness.status;
-        this.brightness.set_url        = config.brightness.url            || this.brightness.status;
+        this.brightness = {status: {}, set_url: {}};
+        if (typeof config.brightness.status === 'object') {
+            this.brightness.status.url = config.brightness.status.url;
+            this.brightness.status.bodyRegEx = new RegExp(config.brightness.status.bodyRegEx);
+        } else {
+            this.brightness.status.url = config.brightness.status;
+        }
+        if (typeof config.brightness.url === 'object') {
+            this.brightness.set_url.url = config.brightness.url.url || this.brightness.status.url;
+            this.brightness.set_url.body = config.brightness.url.body || '';
+        } else {
+            this.brightness.set_url.url = config.brightness.url || this.brightness.status.url;
+            this.brightness.set_url.body = '';
+        }
         this.brightness.http_method    = config.brightness.http_method    || this.http_method;
+        this.brightness.max = config.brightness.max || DEFAULT_BRIGHTNESS_MAX;
         this.cache.brightness = 0;
     } else {
         this.brightness = false;
@@ -129,9 +143,15 @@ function HttpPushRgb(log, config) {
 
     // Color handling
     if (typeof config.color === 'object') {
-        this.color = {};
+        this.color = {"set_url": {}};
+        if (typeof config.color.url === 'object') {
+            this.color.set_url.url = config.color.url.url || this.color.status;
+            this.color.set_url.body = config.color.url.body
+        } else {
+            this.color.set_url.url = config.color.url || this.color.status;
+            this.color.set_url.body = '';
+        }
         this.color.status              = config.color.status;
-        this.color.set_url             = config.color.url                 || this.color.status;
         this.color.http_method         = config.color.http_method         || this.http_method;
         this.color.brightness          = config.color.brightness;
         this.cache.hue = 0;
@@ -342,9 +362,16 @@ HttpPushRgb.prototype = {
         }
 
         if (this.brightness) {
-            this._httpRequest(this.brightness.status, '', 'GET', function(error, response, responseBody) {
+            this._httpRequest(this.brightness.status.url, '', 'GET', function(error, response, responseBody) {
                 if (!this._handleHttpErrorResponse('getBrightness()', error, response, responseBody, callback)) {
-                    var level = parseInt(responseBody);
+                    if (typeof this.brightness.status.bodyRegEx === 'object') {
+                        var level = responseBody.match(this.brightness.status.bodyRegEx)[1];
+                    } else {
+                        var level = parseInt(responseBody);
+                    }
+
+                    level = parseInt(100 / this.brightness.max * level);
+
                     this.log('brightness is currently at %s %', level);
                     callback(null, level);
                 }
@@ -369,9 +396,12 @@ HttpPushRgb.prototype = {
 
         // If achromatic or color.brightness is false, update brightness, otherwise, update HSL as RGB
         if (!this.color || !this.color.brightness) {
-            var url = this.brightness.set_url.replace('%s', level);
+            var calculatedLevel = Math.ceil(this.brightness.max / 100 * level);
 
-            this._httpRequest(url, '', this.brightness.http_method, function(error, response, responseBody) {
+            var url = this.brightness.set_url.url.replace('%s', calculatedLevel);
+            var body = this.brightness.set_url.body.replace('%s', calculatedLevel);
+
+            this._httpRequest(url, body, this.brightness.http_method, function(error, response, responseBody) {
                 if (!this._handleHttpErrorResponse('setBrightness()', error, response, responseBody, callback)) {
                     this.log('setBrightness() successfully set to %s %', level);
                     callback();
@@ -388,12 +418,12 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     getHue: function(callback) {
-        if (this.color && typeof this.color.status !== 'string') {
+        if (this.color && typeof this.color.status.url !== 'string') {
             this.log.warn("Ignoring request; problem with 'color' variables.");
             callback(new Error("There was a problem parsing the 'color' section of your configuration."));
             return;
         }
-        var url = this.color.status;
+        var url = this.color.status.url;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('getHue()', error, response, responseBody, callback)) {
@@ -419,7 +449,7 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     setHue: function(level, callback) {
-        if (this.color && typeof this.color.set_url !== 'string') {
+        if (this.color && typeof this.color.set_url.url !== 'string') {
             this.log.warn("Ignoring request; problem with 'color' variables.");
             callback(new Error("There was a problem parsing the 'color' section of your configuration."));
             return;
@@ -440,12 +470,12 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     getSaturation: function(callback) {
-        if (this.color && typeof this.color.status !== 'string') {
+        if (this.color && typeof this.color.status.url !== 'string') {
             this.log.warn("Ignoring request; problem with 'color' variables.");
             callback(new Error("There was a problem parsing the 'color' section of your configuration."));
             return;
         }
-        var url = this.color.status;
+        var url = this.color.status.url;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('getSaturation()', error, response, responseBody, callback)) {
@@ -472,7 +502,7 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     setSaturation: function(level, callback) {
-        if (this.color && typeof this.color.set_url !== 'string') {
+        if (this.color && typeof this.color.set_url.url !== 'string') {
             this.log.warn("Ignoring request; problem with 'color' variables.");
             callback(new Error("There was a problem parsing the 'color' section of your configuration."));
             return;
@@ -493,23 +523,43 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     _setRGB: function(callback) {
-        var rgb = this._hsvToRgb(this.cache.hue, this.cache.saturation, this.cache.brightness);
-        var r = this._decToHex(rgb.r);
-        var g = this._decToHex(rgb.g);
-        var b = this._decToHex(rgb.b);
-
-        var url = this.color.set_url.replace('%s', r + g + b);
+        var rgbRequest = this._buildRgbRequest();
         this.cacheUpdated = false;
 
-        this.log('_setRGB converting H:%s S:%s B:%s to RGB:%s ...', this.cache.hue, this.cache.saturation, this.cache.brightness, r + g + b);
-
-        this._httpRequest(url, '', this.color.http_method, function(error, response, responseBody) {
+        this._httpRequest(rgbRequest.url, rgbRequest.body, this.color.http_method, function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('_setRGB()', error, response, responseBody, callback)) {
-                this.log('... _setRGB() successfully set to #%s', r + g + b);
+                this.log('... _setRGB() successfully set');
                 callback();
             }
         }.bind(this));
     },
+
+    _buildRgbRequest: function() {
+        var rgb = convert.hsv.rgb([this.cache.hue, this.cache.saturation, this.cache.brightness]);
+        var xyz = convert.rgb.xyz(rgb);
+        var hex = convert.rgb.hex(rgb);
+        var xy = {
+            x: (xyz[0] / 100 / (xyz[0] / 100 + xyz[1] / 100 + xyz[2] / 100)).toFixed(4),
+            y: (xyz[1] / 100 / (xyz[0] / 100 + xyz[1] / 100 + xyz[2] / 100)).toFixed(4)
+        };
+
+        var url = this.color.set_url.url;
+        var body = this.color.set_url.body;
+        var replaces = {
+            '%s': hex,
+            '%xy-x': xy.x,
+            '%xy-y': xy.y
+        };
+        for (var key in replaces) {
+            url = url.replace(key, replaces[key]);
+            body = body.replace(key, replaces[key]);
+        }
+
+        this.log('_buildRgbRequest converting H:%s S:%s B:%s to RGB:%s ...', this.cache.hue, this.cache.saturation, this.cache.brightness, hex);
+
+        return {url: url, body: body};
+    },
+
 
     // Utility Functions
 
@@ -559,41 +609,6 @@ HttpPushRgb.prototype = {
       }
       return errorOccurred;
    },
-
-    /**
-     * Converts an HSV color value to RGB. Conversion formula
-     * adapted from http://stackoverflow.com/a/17243070/2061684
-     * Assumes h in [0..360], and s and l in [0..100] and
-     * returns r, g, and b in [0..255].
-     *
-     * @param   {Number}  h       The hue
-     * @param   {Number}  s       The saturation
-     * @param   {Number}  l       The lightness
-     * @return  {Array}           The RGB representation
-     */
-    _hsvToRgb: function(h, s, v) {
-        var r, g, b, i, f, p, q, t;
-
-        h /= 360;
-        s /= 100;
-        v /= 100;
-
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-        switch (i % 6) {
-            case 0: r = v; g = t; b = p; break;
-            case 1: r = q; g = v; b = p; break;
-            case 2: r = p; g = v; b = t; break;
-            case 3: r = p; g = q; b = v; break;
-            case 4: r = t; g = p; b = v; break;
-            case 5: r = v; g = p; b = q; break;
-        }
-        var rgb = { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
-        return rgb;
-    },
 
     /**
      * Converts an RGB color value to HSL. Conversion formula
