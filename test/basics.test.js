@@ -122,6 +122,39 @@ describe('Homebridge plugin creation', function () {
       expect(this.homebridgeStub.accessory.switch.status.bodyRegEx).to.eql(new RegExp(/1/));
    });
 
+   it('sets color.get_url on legacy color.status config string', function () {
+      // 1. Arrange
+      // Default TestConfig sets color.status URL already.
+
+      // 2. Act
+      sut(this.homebridgeStub);
+
+      // 3. Assert
+      expect(this.homebridgeStub.accessory.color.get_url.url).to.eql("http://localhost:8080/color/status");
+   });
+
+   it('sets color.set_url on legacy color.url config string', function () {
+      // 1. Arrange
+      // Default TestConfig sets color.url URL already.
+
+      // 2. Act
+      sut(this.homebridgeStub);
+
+      // 3. Assert
+      expect(this.homebridgeStub.accessory.color.set_url.url).to.eql("http://localhost:8080/color/set/%s");
+   });
+
+   it('sets color.set_url on new style color.url config object', function () {
+      // 1. Arrange
+      this.testConfig.color.url = {'url': "http://example.com" };
+
+      // 2. Act
+      sut(this.homebridgeStub);
+
+      // 3. Assert
+      expect(this.homebridgeStub.accessory.color.set_url.url).to.eql("http://example.com");
+   });
+
 });
 
 
@@ -274,6 +307,95 @@ describe('Set brightness', function () {
    });
 
 });
+
+// -----------------------------------------------------------------------------
+describe('Get hue', function () {
+
+   beforeEach(function () {
+      // 1. Arrange
+      this.testConfig = new TestConfig();
+
+      // This will also make sure to reset the embedded Sinon stubs.
+      this.homebridgeStub = new (require('./homebridge.stub.js'))(this.testConfig);
+      sut(this.homebridgeStub);
+
+      this.homebridgeStub.accessory._httpRequest = sinon.stub();
+      this.homebridgeCallback = sinon.stub();
+
+      // 2. Act
+      // Allow getHue to create HTTP response callback
+      this.homebridgeStub.accessory.getHue(this.homebridgeCallback);
+   });
+
+
+   it('sends HTTP GET request with correct URL', function () {
+      // 1. Arrange
+      var url = this.testConfig.color.status;
+
+      // 3. Assert
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[0]).equals(url);
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[1]).to.be.empty; // Body empty.
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[2]).equals('GET');
+   });
+
+   it('replies "0" to Homebridge on valid HTTP GET device response "ffffff"', function () {
+      // 2. Act
+      // Call collected HTTP response callback to simulate device response.
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, 'ffffff');
+
+      // 3. Assert
+      expect(this.homebridgeCallback.firstCall.args[1]).equals(0);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['... hue is currently %s', 0]);
+   });
+
+});
+
+
+// -----------------------------------------------------------------------------
+describe('Get saturation', function () {
+
+   beforeEach(function () {
+      // 1. Arrange
+      this.testConfig = new TestConfig();
+
+      // This will also make sure to reset the embedded Sinon stubs.
+      this.homebridgeStub = new (require('./homebridge.stub.js'))(this.testConfig);
+      sut(this.homebridgeStub);
+
+      this.homebridgeStub.accessory._httpRequest = sinon.stub();
+      this.homebridgeCallback = sinon.stub();
+
+      // 2. Act
+      // Allow getSaturation to create HTTP response callback
+      this.homebridgeStub.accessory.getSaturation(this.homebridgeCallback);
+   });
+
+
+   it('sends HTTP GET request with correct URL', function () {
+      // 1. Arrange
+      var url = this.testConfig.color.status;
+
+      // 2. Act
+      this.homebridgeStub.accessory.getSaturation(this.homebridgeCallback);
+
+      // 3. Assert
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[0]).equals(url);
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[1]).to.be.empty; // Body empty.
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[2]).equals('GET');
+   });
+
+   it('replies "0" to Homebridge on valid HTTP GET device response "ffffff"', function () {
+      // 2. Act
+      // Call collected HTTP response callback to simulate device response.
+      this.homebridgeStub.accessory._httpRequest.firstCall.callback(undefined, {statusCode: 200}, 'ffffff');
+
+      // 3. Assert
+      expect(this.homebridgeCallback.firstCall.args[1]).equals(0);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['... saturation is currently %s', 0]);
+   });
+
+});
+
 
 // -----------------------------------------------------------------------------
 describe('Get services', function () {

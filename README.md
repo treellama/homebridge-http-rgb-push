@@ -270,10 +270,16 @@ Following configuration is a real world example for a accessory that combines a 
 ### Color object
 | Key | Description |
 | --- | --- |
-| `status` | URL to get RGB current colour (HEX value) |
-| `url` | URL to set the RGB colour value (HEX value) |
+| `status` | URL to get RGB current colour (HEX value) or a [color status object](#color-status-object). |
+| `url` | URL to set the RGB colour value (HEX value) or a [color url object](#color-url-object). |
 | `brightness` | Whether or not the plugin should include brightness data in `color` HEX data (`true` or `false`). When `true` brightness will be controllable in HomeKit but will be changed through changing RGB values. |
 | `http_method` _(optional)_ | The brightness specific HTTP method for set requests. If omitted defaults to `http_method` as specified in the root structure |
+
+#### Color status object
+| Key | Description |
+| --- | --- |
+| `url` | URL to retrieve color status |
+| `bodyRegEx` _(optional)_ | _Not yet supported_ |
 
 #### Color url object
 | Key | Description |

@@ -143,15 +143,23 @@ function HttpPushRgb(log, config) {
 
     // Color handling
     if (typeof config.color === 'object') {
-        this.color = {"set_url": {}};
+        this.color = {"set_url": {}, "get_url": {}};
         if (typeof config.color.url === 'object') {
             this.color.set_url.url = config.color.url.url || this.color.status;
-            this.color.set_url.body = config.color.url.body
+            this.color.set_url.body = config.color.url.body;
         } else {
             this.color.set_url.url = config.color.url || this.color.status;
             this.color.set_url.body = '';
         }
-        this.color.status              = config.color.status;
+
+        if (typeof config.color.status === 'object') {
+            this.color.get_url.url = config.color.status.url;
+            this.color.get_url.bodyRegEx = config.color.status.bodyRegEx || '';
+        } else {
+            this.color.get_url.url = config.color.status;
+            this.color.get_url.bodyRegEx = '';
+        }
+
         this.color.http_method         = config.color.http_method         || this.http_method;
         this.color.brightness          = config.color.brightness;
         this.cache.hue = 0;
@@ -418,12 +426,12 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     getHue: function(callback) {
-        if (this.color && typeof this.color.status !== 'string') {
+        if (this.color && typeof this.color.get_url.url !== 'string') {
             this.log.warn("Ignoring getHue request; problem with 'color' variables.");
             callback(new Error("There was a problem parsing the 'color.status' section of your configuration."));
             return;
         }
-        var url = this.color.status;
+        var url = this.color.get_url.url;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('getHue()', error, response, responseBody, callback)) {
@@ -470,12 +478,12 @@ HttpPushRgb.prototype = {
      * @param {function} callback The callback that handles the response.
      */
     getSaturation: function(callback) {
-        if (this.color && typeof this.color.status !== 'string') {
+        if (this.color && typeof this.color.get_url.url !== 'string') {
             this.log.warn("Ignoring getSaturation request; problem with 'color' variables.");
             callback(new Error("There was a problem parsing the 'color' section of your configuration."));
             return;
         }
-        var url = this.color.status;
+        var url = this.color.get_url.url;
 
         this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('getSaturation()', error, response, responseBody, callback)) {
