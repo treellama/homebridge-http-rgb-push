@@ -29,7 +29,8 @@
   "preferGlobal": true,
   "dependencies": {
     "color-convert": "^2.0.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "homebridge-http-base": "^2.1.8"
   },
   "scripts": {
     "semantic-release": "semantic-release",
