@@ -105,6 +105,8 @@ function HttpPushRgb(log, config) {
                config.switch.notificationID) {
                try {
                   api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
+                  global.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
+
                } catch (error) {
                    // notificationID is already taken.
                }
