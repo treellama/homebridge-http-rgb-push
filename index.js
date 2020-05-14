@@ -101,10 +101,9 @@ function HttpPushRgb(log, config) {
         api.on('didFinishLaunching', function() {
            // Check if notificationRegistration is set and user specified notificationID.
            // if not 'notificationRegistration' is probably not installed on the system.
-           if (api.notificationRegistration && typeof api.notificationRegistration === "function" &&
+           if (global.notificationRegistration && typeof global.notificationRegistration === "function" &&
                config.switch.notificationID) {
                try {
-                  api.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
                   global.notificationRegistration(config.switch.notificationID, this.handleNotification.bind(this), config.switch.notificationPassword);
 
                } catch (error) {
