@@ -76,6 +76,7 @@ describe('Homebridge plugin creation', function () {
    it('didFinishLaunching callback registers with notification server', function () {
       // 1. Arrange
       // Stub created in homebridge.stub.js already since required for every construct.
+      global.notificationRegistration = sinon.stub();
 
       // 2. Act
       // Let SUT pass correct didFinishLaunching callback during construction.
@@ -84,9 +85,24 @@ describe('Homebridge plugin creation', function () {
       this.homebridgeStub.on.firstCall.lastArg();
 
       // 3. Assert
-      expect(this.homebridgeStub.notificationRegistration.calledOnce).equal(true);
-      expect(this.homebridgeStub.notificationRegistration.firstCall.args[0]).equal('notification-id-light-a');
-      expect(this.homebridgeStub.notificationRegistration.firstCall.lastArg).equal('notification-password');
+      expect(global.notificationRegistration.calledOnce).equal(true);
+      expect(global.notificationRegistration.firstCall.args[0]).equal('notification-id-light-a');
+      expect(global.notificationRegistration.firstCall.lastArg).equal('notification-password');
+   });
+
+   it('didFinishLaunching callback does nothing on missing global', function () {
+      // 1. Arrange
+      // Stub created in homebridge.stub.js already since required for every construct.
+      // Do not create: global.notificationRegistration
+
+      // 2. Act
+      // Let SUT pass correct didFinishLaunching callback during construction.
+      sut(this.homebridgeStub);
+      // Call actual didFinishLaunching callback
+      this.homebridgeStub.on.firstCall.lastArg();
+
+      // 3. Assert
+      expect(global.notificationRegistration.calledOnce).equal(false);
    });
 
    it('sets switch.status.bodyRegEx by default to /1/', function () {

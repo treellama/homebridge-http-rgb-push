@@ -36,6 +36,4 @@ module.exports = function(config) {
 
    this.on = sinon.stub();
 
-   this.notificationRegistration = sinon.stub();
-
 };
