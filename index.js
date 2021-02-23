@@ -338,7 +338,7 @@ HttpPushRgb.prototype = {
         // handleNotification() also indirectly calls setPowerState.
         if (this.ignoreNextSetPowerState) {
             this.ignoreNextSetPowerState = false;
-            callback(undefined);
+            callback();
             return;
         }
 
@@ -353,7 +353,7 @@ HttpPushRgb.prototype = {
         this._httpRequest(url, body, this.http_method, function(error, response, responseBody) {
             if (!this._handleHttpErrorResponse('setPowerState()', error, response, responseBody, callback)) {
                 this.log('setPowerState() successfully set to %s', state ? 'ON' : 'OFF');
-                callback(undefined, responseBody);
+                callback();
             }
         }.bind(this));
     },
