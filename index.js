@@ -547,6 +547,13 @@ HttpPushRgb.prototype = {
         var rgb = convert.hsv.rgb([this.cache.hue, this.cache.saturation, this.cache.brightness]);
         var xyz = convert.rgb.xyz(rgb);
         var hex = convert.rgb.hex(rgb);
+
+        if(xyz == null || xyz.size == 0){
+           this.log.warn("Can't read the brightness property! Ignoring the request");
+           return {url: '', body: ''};
+        }
+
+
         var xy = {
             x: (xyz[0] / 100 / (xyz[0] / 100 + xyz[1] / 100 + xyz[2] / 100)).toFixed(4),
             y: (xyz[1] / 100 / (xyz[0] / 100 + xyz[1] / 100 + xyz[2] / 100)).toFixed(4)
