@@ -33,6 +33,7 @@
     "homebridge-http-base": "^2.1.8"
   },
   "scripts": {
+    "lint": "eslint *.js",
     "semantic-release": "semantic-release",
     "test": "mocha test/basics.test.js"
   },
@@ -40,6 +41,7 @@
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "semantic-release": "^15.13.2",
-    "sinon": "^7.2.2"
+    "sinon": "^7.2.2",
+    "eslint": "^7.9.0"
   }
 }

@@ -1,4 +1,4 @@
-name: Build, Lint and Release
+name: Build, Lint, Test and Release
 
 on: [push, pull_request]
 

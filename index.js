@@ -188,6 +188,7 @@ HttpPushRgb.prototype = {
 
         this.getPowerState( (error, onState) => {
 
+           // eslint-disable-next-line no-unused-vars
            this.setPowerState(!onState, (error, responseBody) => {
                // Ignore any possible error, just continue as if nothing happened.
                setTimeout(() => {
@@ -277,8 +278,6 @@ HttpPushRgb.prototype = {
      * @param {function} jsonRequest The characteristic and characteristic value to update.
      */
    handleNotification: function (jsonRequest) {
-        const service = jsonRequest.service;
-
         const characteristic = jsonRequest.characteristic;
         const value = jsonRequest.value;
 
@@ -373,10 +372,11 @@ HttpPushRgb.prototype = {
         if (this.brightness) {
             this._httpRequest(this.brightness.status.url, '', 'GET', function(error, response, responseBody) {
                 if (!this._handleHttpErrorResponse('getBrightness()', error, response, responseBody, callback)) {
+                    var level;
                     if (typeof this.brightness.status.bodyRegEx === 'object') {
-                        var level = responseBody.match(this.brightness.status.bodyRegEx)[1];
+                        level = parseInt(responseBody.match(this.brightness.status.bodyRegEx)[1]);
                     } else {
-                        var level = parseInt(responseBody);
+                        level = parseInt(responseBody);
                     }
 
                     level = parseInt(100 / this.brightness.max * level);
