@@ -1,4 +1,4 @@
-name: Build, Lint, Test and Release
+name: Lint, Test and Release
 
 on: [push, pull_request]
 
@@ -25,11 +25,6 @@ jobs:
 
       - name: Lint the project
         run: npm run lint
-
-      - name: Build the project
-        run: npm run build
-        env:
-          CI: true
           
       - name: Test
         run: npm run test
