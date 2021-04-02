@@ -288,7 +288,8 @@ describe('Set brightness', function () {
 
       // 3. Assert
       expect(this.homebridgeCallback.calledOnce).to.be.true;
-      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['setBrightness() successfully set to %s %', 100]);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['Caching Brightness as %s ...', 100]);
+      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['setBrightness() successfully set to %s%', 100]);
    });
 
    it('sets RGB instead of brightness to Homebridge when config.color.brightness equals true', function () {
@@ -303,8 +304,12 @@ describe('Set brightness', function () {
 
       // 3. Assert
       expect(this.homebridgeCallback.calledOnce).to.be.true; // But now inside _buildRgbRequest.
-      expect(this.homebridgeStub.logger.firstCall.args[0]).deep.equals('_buildRgbRequest converting H:%s S:%s B:%s to RGB:%s ...');
-      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['... _setRGB() successfully set']);
+      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['Setting brightness via RGB.']);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['Caching Brightness as %s ...', 100]);
+      expect(this.homebridgeStub.logger.thirdCall.args[0]).deep.equals('_buildRgbRequest converting H:%s S:%s B:%s to RGB:%s ...');
+      expect(this.homebridgeStub.logger.getCall(3).args).deep.equals(['... _setRGB() successfully set']);
+      expect(this.homebridgeStub.accessory._httpRequest.firstCall.args[0]).not.to.be.empty;
+
    });
 
    it('replies an Error object with message "Received HTTP error code 500." to Homebridge on HTTP GET device response status code 500', function () {
@@ -319,7 +324,8 @@ describe('Set brightness', function () {
 
       // 3. Assert
       expect(this.homebridgeCallback.firstCall.args[0]).to.be.instanceOf(Error).and.have.property('message', 'Received HTTP error code '+HTTP_ERROR_STATUS_CODE+': "Dummy error"');
-      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['setBrightness() returned HTTP error code: %s: "%s"', HTTP_ERROR_STATUS_CODE, 'Dummy error']);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['Caching Brightness as %s ...', 100]);
+      expect(this.homebridgeStub.logger.secondCall.args).deep.equals(['setBrightness() returned HTTP error code: %s: "%s"', HTTP_ERROR_STATUS_CODE, 'Dummy error']);
    });
 
 });
@@ -361,7 +367,7 @@ describe('Get hue', function () {
 
       // 3. Assert
       expect(this.homebridgeCallback.firstCall.args[1]).equals(0);
-      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['... hue is currently %s', 0]);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['... hue is currently %s. RGB: %s', 0, 'ffffff']);
    });
 
 });
@@ -407,7 +413,7 @@ describe('Get saturation', function () {
 
       // 3. Assert
       expect(this.homebridgeCallback.firstCall.args[1]).equals(0);
-      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['... saturation is currently %s', 0]);
+      expect(this.homebridgeStub.logger.firstCall.args).deep.equals(['... saturation is currently %s. RGB: %s', 0, 'ffffff']);
    });
 
 });

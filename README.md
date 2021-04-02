@@ -175,7 +175,7 @@ Following configuration is a real world example for a accessory that combines a 
                 "url":"http://192.168.0.120/api/<apikey>/lights/6/state",
                 "body": "{\"bri\": %s}"
             },
-            "http_method": "`PUT`",
+            "http_method": "PUT",
             "max": 254
         },
         "color": {

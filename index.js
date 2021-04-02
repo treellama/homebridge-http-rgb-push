@@ -381,12 +381,32 @@ HttpPushRgb.prototype = {
 
                     level = parseInt(100 / this.brightness.max * level);
 
-                    this.log('brightness is currently at %s %', level);
+                    this.log('brightness is currently at %s%', level);
                     callback(null, level);
                 }
             }.bind(this));
         } else {
-            callback(null, this.cache.brightness);
+            if(this.color.brightness) {
+                var url = this.color.get_url.url;
+                this._httpRequest(url, '', 'GET', function(error, response, responseBody) {
+                    if (!this._handleHttpErrorResponse('getBrightness()', error, response, responseBody, callback)) {
+                        var rgb = responseBody;
+                        var levels = this._rgbToHsl(
+                            parseInt(rgb.substr(0,2),16),
+                            parseInt(rgb.substr(2,2),16),
+                            parseInt(rgb.substr(4,2),16)
+                        );
+        
+                        var brightness = levels[2];
+        
+                        this.log('... brightness is currently %s. RGB: %s', brightness, rgb);
+                        this.cache.brightness = brightness;
+                        callback(null, brightness);
+                    }
+                }.bind(this));
+            } else {
+                callback(null, this.cache.brightness);
+            }
         }
     },
 
@@ -401,6 +421,8 @@ HttpPushRgb.prototype = {
             callback(new Error("No 'brightness' defined in configuration"));
             return;
         }
+
+        this.log('Caching Brightness as %s ...', level);
         this.cache.brightness = level;
 
         // If achromatic or color.brightness is false, update brightness, otherwise, update HSL as RGB
@@ -412,11 +434,12 @@ HttpPushRgb.prototype = {
 
             this._httpRequest(url, body, this.brightness.http_method, function(error, response, responseBody) {
                 if (!this._handleHttpErrorResponse('setBrightness()', error, response, responseBody, callback)) {
-                    this.log('setBrightness() successfully set to %s %', level);
+                    this.log('setBrightness() successfully set to %s%', level);
                     callback();
                 }
             }.bind(this));
         } else {
+            this.log("Setting brightness via RGB.");
             this._setRGB(callback);
         }
     },
@@ -445,7 +468,7 @@ HttpPushRgb.prototype = {
 
                 var hue = levels[0];
 
-                this.log('... hue is currently %s', hue);
+                this.log('... hue is currently %s. RGB: %s', hue, rgb);
                 this.cache.hue = hue;
                 callback(null, hue);
             }
@@ -497,7 +520,7 @@ HttpPushRgb.prototype = {
 
                 var saturation = levels[1];
 
-                this.log('... saturation is currently %s', saturation);
+                this.log('... saturation is currently %s. RGB: %s', saturation, rgb);
                 this.cache.saturation = saturation;
                 callback(null, saturation);
             }
@@ -548,11 +571,10 @@ HttpPushRgb.prototype = {
         var xyz = convert.rgb.xyz(rgb);
         var hex = convert.rgb.hex(rgb);
 
-        if(xyz == null || xyz.size == 0){
-           this.log.warn("Can't read the brightness property! Ignoring the request");
+        if(xyz == null || xyz.size == 0) {
+           this.log.error("Failed to convert HSB to xyz values. Cached values: H:%s S:%s B:%s", this.cache.hue, this.cache.saturation, this.cache.brightness);
            return {url: '', body: ''};
         }
-
 
         var xy = {
             x: (xyz[0] / 100 / (xyz[0] / 100 + xyz[1] / 100 + xyz[2] / 100)).toFixed(4),
